@@ -9,7 +9,7 @@ import TabsPage from '../views/TabsPage.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/tabs/tab1',
+    redirect: '/tabs/customer',
     meta: {
       public: true,
     },
@@ -36,20 +36,28 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/create-customer',
+    component: () => import('@/views/CreateCustomer.vue'),
+  },
+  {
+    path: '/customer/:id',
+    component: () => import('@/views/CustomerDetail.vue'),
+  },
+  {
     path: '/tabs/',
     component: TabsPage,
     children: [
       {
         path: '',
-        redirect: '/tabs/tab1',
+        redirect: '/tabs/customer',
       },
       {
-        path: 'tab1',
-        component: () => import('@/views/Tab1Page.vue'),
+        path: 'customer',
+        component: () => import('@/views/Customer.vue'),
       },
       {
-        path: 'tab2',
-        component: () => import('@/views/Tab2Page.vue'),
+        path: 'courses',
+        component: () => import('@/views/Courses.vue'),
       },
       {
         path: 'tab3',
