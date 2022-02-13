@@ -1,0 +1,8 @@
+{
+  "name": "Active Dogs",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue",
+  "id": "12cb69d3"
+}
