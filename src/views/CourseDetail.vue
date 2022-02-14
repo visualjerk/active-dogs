@@ -1,31 +1,31 @@
 <template>
   <ion-page>
-    <ion-loading v-if="!customer"></ion-loading>
+    <ion-loading v-if="!course"></ion-loading>
     <template v-else>
       <ion-header>
         <ion-toolbar>
-          <ion-title>{{ customer.dogname }} ({{ customer.name }})</ion-title>
+          <ion-title>{{ course.name }}</ion-title>
         </ion-toolbar>
       </ion-header>
       <ion-content :fullscreen="true">
         <ion-header collapse="condense">
           <ion-toolbar>
             <ion-title>
-              {{ customer.dogname }} ({{ customer.name }})
+              {{ course.name }}
             </ion-title>
           </ion-toolbar>
         </ion-header>
         <ion-button
           expand="block"
-          @click="deleteCustomer"
+          @click="deleteCourse"
           class="button"
           color="danger"
         >
-          Kunde löschen
+          Kurs löschen
         </ion-button>
         <ion-button
           expand="block"
-          router-link="/tabs/customer"
+          router-link="/tabs/courses"
           router-direction="back"
           color="light"
         >
@@ -63,30 +63,27 @@ export default defineComponent({
     IonButton,
   },
   setup() {
-    const customer = ref()
+    const course = ref()
     const route = useRoute()
     const ionRouter = useIonRouter()
     const { id } = route.params
 
-    async function getCustomer() {
-      const result = await supabase
-        .from('customers')
-        .select(`name, dogname, id`)
-        .match({
-          id,
-        })
+    async function getCourse() {
+      const result = await supabase.from('courses').select(`name, id`).match({
+        id,
+      })
       if (result.error) {
         return
       }
-      customer.value = result.body[0]
+      course.value = result.body[0]
     }
-    getCustomer()
+    getCourse()
 
-    async function deleteCustomer() {
-      const { error } = await supabase.from('customers').delete().match({ id })
+    async function deleteCourse() {
+      const { error } = await supabase.from('courses').delete().match({ id })
       if (error) {
         const toast = await toastController.create({
-          message: 'Fehler beim Löschen des Kunden.',
+          message: 'Fehler beim Löschen des Kurses.',
           duration: 3000,
           color: 'danger',
         })
@@ -95,17 +92,17 @@ export default defineComponent({
         return
       }
       const toast = await toastController.create({
-        message: 'Kunde erfolgreich gelöscht.',
+        message: 'Kurs erfolgreich gelöscht.',
         duration: 3000,
         color: 'success',
       })
       toast.present()
-      ionRouter.push('/tabs/customer')
+      ionRouter.push('/tabs/courses')
     }
 
     return {
-      customer,
-      deleteCustomer,
+      course,
+      deleteCourse,
     }
   },
 })

@@ -44,6 +44,14 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/CustomerDetail.vue'),
   },
   {
+    path: '/create-course',
+    component: () => import('@/views/CreateCourse.vue'),
+  },
+  {
+    path: '/course/:id',
+    component: () => import('@/views/CourseDetail.vue'),
+  },
+  {
     path: '/tabs/',
     component: TabsPage,
     children: [

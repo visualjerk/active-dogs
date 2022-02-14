@@ -41,7 +41,7 @@ import {
 import { supabase } from '@/api'
 
 export default defineComponent({
-  name: 'CustomerPage',
+  name: 'CustomerView',
   components: {
     IonHeader,
     IonToolbar,

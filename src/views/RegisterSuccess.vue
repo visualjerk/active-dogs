@@ -34,7 +34,6 @@ import {
 } from '@ionic/vue'
 
 export default defineComponent({
-  name: 'RegisterView',
   components: {
     IonText,
     IonCard,

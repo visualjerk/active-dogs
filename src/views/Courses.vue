@@ -11,22 +11,68 @@
           <ion-title size="large">Kurse</ion-title>
         </ion-toolbar>
       </ion-header>
+      <ion-button router-link="/create-course" class="button">
+        Neuen Kurs hinzufügen
+      </ion-button>
+      <ion-card
+        v-for="{ name, id } in courses"
+        :key="id"
+        button
+        :router-link="`/course/${id}`"
+      >
+        <ion-card-content> {{ name }} </ion-card-content>
+      </ion-card>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, Ref, ref } from 'vue'
 import {
   IonPage,
   IonHeader,
   IonToolbar,
   IonTitle,
   IonContent,
+  IonButton,
+  IonCard,
+  IonCardContent,
 } from '@ionic/vue'
+import { supabase } from '@/api'
 
 export default defineComponent({
-  name: 'CoursesPage',
-  components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage },
+  name: 'CoursesView',
+  components: {
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonPage,
+    IonButton,
+    IonCard,
+    IonCardContent,
+  },
+  setup() {
+    const courses: Ref<any> = ref([])
+
+    async function getCourses() {
+      const result = await supabase.from('courses').select(`name, id`)
+      if (result.error) {
+        return
+      }
+      courses.value = result.body
+    }
+    getCourses()
+
+    return {
+      courses,
+    }
+  },
 })
 </script>
+
+<style scoped>
+.button {
+  margin: 1rem;
+}
+</style>
