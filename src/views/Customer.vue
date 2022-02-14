@@ -39,6 +39,7 @@ import {
   IonCardContent,
 } from '@ionic/vue'
 import { supabase } from '@/api'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'CustomerView',
@@ -65,6 +66,10 @@ export default defineComponent({
       customers.value = result.body
     }
     getCustomers()
+
+    useRouter().beforeResolve(() => {
+      getCustomers()
+    })
 
     return {
       customers,

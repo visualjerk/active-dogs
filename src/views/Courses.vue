@@ -39,6 +39,7 @@ import {
   IonCardContent,
 } from '@ionic/vue'
 import { supabase } from '@/api'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'CoursesView',
@@ -62,7 +63,12 @@ export default defineComponent({
       }
       courses.value = result.body
     }
+
     getCourses()
+
+    useRouter().beforeResolve(() => {
+      getCourses()
+    })
 
     return {
       courses,
