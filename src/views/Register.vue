@@ -69,7 +69,7 @@ export default defineComponent({
       })
       if (error) {
         const toast = await toastController.create({
-          message: 'Fehler beim Registrieren. Bitte versuche es erneut.',
+          message: `Fehler beim Registrieren: ${error.message}`,
           duration: 3000,
           color: 'danger',
         })

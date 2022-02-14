@@ -69,8 +69,8 @@ export default defineComponent({
       })
       if (error) {
         const toast = await toastController.create({
-          message: 'Fehler beim Einloggen. Bitte versuche es erneut.',
-          duration: 3000,
+          message: `Fehler beim Einloggen: ${error.message}`,
+          duration: 20000,
           color: 'danger',
         })
         toast.present()
