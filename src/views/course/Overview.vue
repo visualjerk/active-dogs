@@ -57,7 +57,10 @@ export default defineComponent({
     const courses: Ref<any> = ref([])
 
     async function getCourses() {
-      const result = await supabase.from('courses').select(`name, id`)
+      const result = await supabase
+        .from('courses')
+        .select(`name, id`)
+        .order('name')
       if (result.error) {
         return
       }

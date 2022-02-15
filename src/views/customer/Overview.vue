@@ -60,6 +60,7 @@ export default defineComponent({
       const result = await supabase
         .from('customers')
         .select(`name, dogname, id`)
+        .order('dogname')
       if (result.error) {
         return
       }
