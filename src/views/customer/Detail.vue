@@ -48,6 +48,7 @@ import {
   IonButton,
   toastController,
   useIonRouter,
+  onIonViewWillEnter,
 } from '@ionic/vue'
 import { useRoute } from 'vue-router'
 import { supabase } from '@/api'
@@ -82,6 +83,7 @@ export default defineComponent({
       customer.value = result.body[0]
     }
     getCustomer()
+    onIonViewWillEnter(getCustomer)
 
     async function deleteCustomer() {
       const { error } = await supabase.from('customers').delete().match({ id })
@@ -92,13 +94,12 @@ export default defineComponent({
           color: 'danger',
         })
         toast.present()
-        console.log(error)
+        console.error(error)
         return
       }
       const toast = await toastController.create({
         message: 'Kunde erfolgreich gelöscht.',
         duration: 3000,
-        color: 'success',
       })
       toast.present()
       ionRouter.push('/tabs/customer')

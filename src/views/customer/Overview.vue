@@ -37,9 +37,9 @@ import {
   IonButton,
   IonCard,
   IonCardContent,
+  onIonViewWillEnter,
 } from '@ionic/vue'
 import { supabase } from '@/api'
-import { useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'CustomerOverview',
@@ -66,10 +66,7 @@ export default defineComponent({
       customers.value = result.body
     }
     getCustomers()
-
-    useRouter().beforeResolve(() => {
-      getCustomers()
-    })
+    onIonViewWillEnter(getCustomers)
 
     return {
       customers,

@@ -37,9 +37,9 @@ import {
   IonButton,
   IonCard,
   IonCardContent,
+  onIonViewWillEnter,
 } from '@ionic/vue'
 import { supabase } from '@/api'
-import { useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'CourseOverview',
@@ -65,10 +65,7 @@ export default defineComponent({
     }
 
     getCourses()
-
-    useRouter().beforeResolve(() => {
-      getCourses()
-    })
+    onIonViewWillEnter(getCourses)
 
     return {
       courses,

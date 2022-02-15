@@ -67,7 +67,6 @@ export default defineComponent({
     const ionRouter = useIonRouter()
 
     async function createCourse() {
-      console.log(supabase.auth.user())
       const { error } = await supabase.from('courses').insert([
         {
           name: unref(name),
@@ -80,13 +79,12 @@ export default defineComponent({
           color: 'danger',
         })
         toast.present()
-        console.log(error)
+        console.error(error)
         return
       }
       const toast = await toastController.create({
         message: 'Kurs erfolgreich hinzugefügt.',
         duration: 3000,
-        color: 'success',
       })
       toast.present()
       name.value = ''

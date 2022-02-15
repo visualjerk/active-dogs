@@ -72,7 +72,6 @@ export default defineComponent({
     const ionRouter = useIonRouter()
 
     async function createCustomer() {
-      console.log(supabase.auth.user())
       const { error } = await supabase.from('customers').insert([
         {
           dogname: unref(dogname),
@@ -86,13 +85,12 @@ export default defineComponent({
           color: 'danger',
         })
         toast.present()
-        console.log(error)
+        console.error(error)
         return
       }
       const toast = await toastController.create({
         message: 'Kunde erfolgreich hinzugefügt.',
         duration: 3000,
-        color: 'success',
       })
       toast.present()
       dogname.value = ''

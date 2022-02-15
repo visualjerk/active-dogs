@@ -74,7 +74,7 @@ export default defineComponent({
           color: 'danger',
         })
         toast.present()
-        console.log(error)
+        console.error(error)
         return
       }
       ionRouter.push('/')
