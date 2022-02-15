@@ -2,25 +2,25 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Kurse</ion-title>
+        <ion-title>Kunden</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
         <ion-toolbar>
-          <ion-title size="large">Kurse</ion-title>
+          <ion-title size="large">Kunden</ion-title>
         </ion-toolbar>
       </ion-header>
-      <ion-button router-link="/create-course" class="button">
-        Neuen Kurs hinzufügen
+      <ion-button router-link="/tabs/customer/create" class="button">
+        Neuen Kunden hinzufügen
       </ion-button>
       <ion-card
-        v-for="{ name, id } in courses"
+        v-for="{ name, dogname, id } in customers"
         :key="id"
         button
-        :router-link="`/course/${id}`"
+        :router-link="`/tabs/customer/${id}`"
       >
-        <ion-card-content> {{ name }} </ion-card-content>
+        <ion-card-content> {{ dogname }} ({{ name }}) </ion-card-content>
       </ion-card>
     </ion-content>
   </ion-page>
@@ -42,7 +42,7 @@ import { supabase } from '@/api'
 import { useRouter } from 'vue-router'
 
 export default defineComponent({
-  name: 'CoursesView',
+  name: 'CustomerOverview',
   components: {
     IonHeader,
     IonToolbar,
@@ -54,24 +54,25 @@ export default defineComponent({
     IonCardContent,
   },
   setup() {
-    const courses: Ref<any> = ref([])
+    const customers: Ref<any> = ref([])
 
-    async function getCourses() {
-      const result = await supabase.from('courses').select(`name, id`)
+    async function getCustomers() {
+      const result = await supabase
+        .from('customers')
+        .select(`name, dogname, id`)
       if (result.error) {
         return
       }
-      courses.value = result.body
+      customers.value = result.body
     }
-
-    getCourses()
+    getCustomers()
 
     useRouter().beforeResolve(() => {
-      getCourses()
+      getCustomers()
     })
 
     return {
-      courses,
+      customers,
     }
   },
 })

@@ -8,13 +8,6 @@ import TabsPage from '../views/TabsPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
-    redirect: '/tabs/customer',
-    meta: {
-      public: true,
-    },
-  },
-  {
     path: '/login',
     component: Login,
     meta: {
@@ -36,20 +29,8 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/create-customer',
-    component: () => import('@/views/CreateCustomer.vue'),
-  },
-  {
-    path: '/customer/:id',
-    component: () => import('@/views/CustomerDetail.vue'),
-  },
-  {
-    path: '/create-course',
-    component: () => import('@/views/CreateCourse.vue'),
-  },
-  {
-    path: '/course/:id',
-    component: () => import('@/views/CourseDetail.vue'),
+    path: '/',
+    redirect: '/tabs/course',
   },
   {
     path: '/tabs/',
@@ -57,19 +38,45 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: '',
-        redirect: '/tabs/customer',
+        redirect: '/tabs/course',
+      },
+      {
+        path: 'course',
+        redirect: '/tabs/course/overview',
+        component: () => import('@/views/course/Index.vue'),
+        children: [
+          {
+            path: 'overview',
+            component: () => import('@/views/course/Overview.vue'),
+          },
+          {
+            path: 'create',
+            component: () => import('@/views/course/Create.vue'),
+          },
+          {
+            path: ':id',
+            component: () => import('@/views/course/Detail.vue'),
+          },
+        ],
       },
       {
         path: 'customer',
-        component: () => import('@/views/Customer.vue'),
-      },
-      {
-        path: 'courses',
-        component: () => import('@/views/Courses.vue'),
-      },
-      {
-        path: 'tab3',
-        component: () => import('@/views/Tab3Page.vue'),
+        redirect: '/tabs/customer/overview',
+        component: () => import('@/views/customer/Index.vue'),
+        children: [
+          {
+            path: 'overview',
+            component: () => import('@/views/customer/Overview.vue'),
+          },
+          {
+            path: 'create',
+            component: () => import('@/views/customer/Create.vue'),
+          },
+          {
+            path: ':id',
+            component: () => import('@/views/customer/Detail.vue'),
+          },
+        ],
       },
     ],
   },

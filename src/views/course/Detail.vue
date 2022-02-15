@@ -25,7 +25,7 @@
         </ion-button>
         <ion-button
           expand="block"
-          router-link="/tabs/courses"
+          router-link="/tabs/course"
           router-direction="back"
           color="light"
         >
@@ -53,6 +53,7 @@ import { useRoute } from 'vue-router'
 import { supabase } from '@/api'
 
 export default defineComponent({
+  name: 'CourseDetail',
   components: {
     IonHeader,
     IonLoading,
@@ -97,7 +98,7 @@ export default defineComponent({
         color: 'success',
       })
       toast.present()
-      ionRouter.push('/tabs/courses')
+      ionRouter.push('/tabs/course')
     }
 
     return {

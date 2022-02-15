@@ -53,6 +53,7 @@ import { useRoute } from 'vue-router'
 import { supabase } from '@/api'
 
 export default defineComponent({
+  name: 'CustomerDetail',
   components: {
     IonHeader,
     IonLoading,

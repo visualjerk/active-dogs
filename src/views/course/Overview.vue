@@ -2,25 +2,25 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Kunden</ion-title>
+        <ion-title>Kurse</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
         <ion-toolbar>
-          <ion-title size="large">Kunden</ion-title>
+          <ion-title size="large">Kurse</ion-title>
         </ion-toolbar>
       </ion-header>
-      <ion-button router-link="/create-customer" class="button">
-        Neuen Kunden hinzufügen
+      <ion-button router-link="/tabs/course/create" class="button">
+        Neuen Kurs hinzufügen
       </ion-button>
       <ion-card
-        v-for="{ name, dogname, id } in customers"
+        v-for="{ name, id } in courses"
         :key="id"
         button
-        :router-link="`/customer/${id}`"
+        :router-link="`/tabs/course/${id}`"
       >
-        <ion-card-content> {{ dogname }} ({{ name }}) </ion-card-content>
+        <ion-card-content> {{ name }} </ion-card-content>
       </ion-card>
     </ion-content>
   </ion-page>
@@ -42,7 +42,7 @@ import { supabase } from '@/api'
 import { useRouter } from 'vue-router'
 
 export default defineComponent({
-  name: 'CustomerView',
+  name: 'CourseOverview',
   components: {
     IonHeader,
     IonToolbar,
@@ -54,25 +54,24 @@ export default defineComponent({
     IonCardContent,
   },
   setup() {
-    const customers: Ref<any> = ref([])
+    const courses: Ref<any> = ref([])
 
-    async function getCustomers() {
-      const result = await supabase
-        .from('customers')
-        .select(`name, dogname, id`)
+    async function getCourses() {
+      const result = await supabase.from('courses').select(`name, id`)
       if (result.error) {
         return
       }
-      customers.value = result.body
+      courses.value = result.body
     }
-    getCustomers()
+
+    getCourses()
 
     useRouter().beforeResolve(() => {
-      getCustomers()
+      getCourses()
     })
 
     return {
-      customers,
+      courses,
     }
   },
 })
