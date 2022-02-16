@@ -22,6 +22,9 @@
             <ion-label>
               {{ course_date.date }}: {{ course_date.topics.name }}
             </ion-label>
+            <ion-badge slot="end">
+              {{ course_date.customers?.length }}
+            </ion-badge>
           </ion-item>
         </ion-list>
         <ion-button
@@ -141,6 +144,9 @@ export default defineComponent({
           date,
           topics (
             name
+          ),
+          customers (
+            id
           )
         )
       `
