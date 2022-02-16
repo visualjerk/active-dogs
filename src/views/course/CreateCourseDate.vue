@@ -61,7 +61,6 @@ import PageLayout from '@/components/PageLayout.vue'
 import CustomerInputList from '@/components/CustomerInputList.vue'
 import { notify } from '@/notify'
 import { useRoute } from 'vue-router'
-import { PostgrestError } from '@supabase/postgrest-js'
 
 export default defineComponent({
   name: 'CourseCreateCourseDate',
@@ -108,8 +107,14 @@ export default defineComponent({
       }
       course.value = result.body[0]
     }
-    getCourse()
-    onIonViewWillEnter(getCourse)
+    function init() {
+      date.value = dateDefault
+      topicName.value = ''
+      selectedCustomerIds.value = []
+      getCourse()
+    }
+    init()
+    onIonViewWillEnter(init)
 
     async function createCourseDate() {
       const { error: topicError, data: topicData } = await supabase
@@ -152,9 +157,6 @@ export default defineComponent({
       }
 
       notify.success('Kurs erfolgreich hinzugefügt.')
-      date.value = dateDefault
-      topicName.value = ''
-      selectedCustomerIds.value = []
       ionRouter.push(`/tabs/course/${unref(course).id}`)
     }
 

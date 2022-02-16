@@ -18,7 +18,7 @@
             v-for="course_date in course.course_dates"
             :key="course_date.id"
           >
-            <ion-icon :icon="person" slot="start"></ion-icon>
+            <ion-icon :icon="calendar" slot="start"></ion-icon>
             <ion-label>
               {{ course_date.date }}: {{ course_date.topics.name }}
             </ion-label>
@@ -44,6 +44,9 @@
           <ion-item v-for="customer in course.customers" :key="customer.id">
             <ion-icon :icon="person" slot="start"></ion-icon>
             <ion-label>{{ customer.dogname }} ({{ customer.name }})</ion-label>
+            <ion-badge slot="end">
+              {{ customer.course_dates?.length }} / 10
+            </ion-badge>
           </ion-item>
         </ion-list>
         <ion-button
@@ -87,12 +90,13 @@ import {
   IonList,
   IonIcon,
   IonButton,
+  IonBadge,
   useIonRouter,
   onIonViewWillEnter,
 } from '@ionic/vue'
 import { useRoute } from 'vue-router'
 import { supabase } from '@/api'
-import { person, pawOutline } from 'ionicons/icons'
+import { person, pawOutline, calendar } from 'ionicons/icons'
 import PageLayout from '@/components/PageLayout.vue'
 import { notify } from '@/notify'
 
@@ -109,6 +113,7 @@ export default defineComponent({
     IonLabel,
     IonList,
     IonIcon,
+    IonBadge,
   },
   setup() {
     const course = ref()
@@ -126,7 +131,10 @@ export default defineComponent({
         customers (
           id,
           name,
-          dogname
+          dogname,
+          course_dates (
+            id
+          )
         ),
         course_dates (
           id,
@@ -164,6 +172,7 @@ export default defineComponent({
       deleteCourse,
       person,
       pawOutline,
+      calendar,
     }
   },
 })
