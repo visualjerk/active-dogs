@@ -61,6 +61,10 @@ const routes: Array<RouteRecordRaw> = [
             path: ':id/editcustomer',
             component: () => import('@/views/course/EditCustomer.vue'),
           },
+          {
+            path: ':id/createcoursedate',
+            component: () => import('@/views/course/CreateCourseDate.vue'),
+          },
         ],
       },
       {

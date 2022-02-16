@@ -5,17 +5,10 @@
     :title="`${course?.name} - Teilnehmer`"
   >
     <template v-if="course">
-      <ion-list>
-        <ion-item v-for="customer in customers" :key="customer.id">
-          <ion-checkbox
-            slot="start"
-            @update:modelValue="toggleCustomer(customer.id)"
-            :modelValue="isCustomerChecked(customer.id)"
-          >
-          </ion-checkbox>
-          <ion-label>{{ customer.dogname }} ({{ customer.name }})</ion-label>
-        </ion-item>
-      </ion-list>
+      <CustomerInputList
+        :customers="customers"
+        v-model="selectedCustomerIds"
+      ></CustomerInputList>
       <ion-button expand="block" @click="saveCustomers" class="ion-margin">
         Änderungen speichern
       </ion-button>
@@ -34,37 +27,27 @@
 
 <script lang="ts">
 import { defineComponent, ref, Ref } from 'vue'
-import {
-  IonButton,
-  IonCheckbox,
-  IonItem,
-  IonLabel,
-  IonList,
-  useIonRouter,
-  onIonViewWillEnter,
-} from '@ionic/vue'
+import { IonButton, useIonRouter, onIonViewWillEnter } from '@ionic/vue'
 import { useRoute } from 'vue-router'
 import { supabase } from '@/api'
 import { PostgrestError } from '@supabase/postgrest-js'
 import PageLayout from '@/components/PageLayout.vue'
+import CustomerInputList from '@/components/CustomerInputList.vue'
 import { notify } from '@/notify'
 
 export default defineComponent({
   name: 'CourseEditCustomer',
   components: {
     IonButton,
-    IonCheckbox,
-    IonItem,
-    IonLabel,
-    IonList,
     PageLayout,
+    CustomerInputList,
   },
   setup() {
     const course = ref()
     const route = useRoute()
     const ionRouter = useIonRouter()
     const { id } = route.params
-    const selectedCustomerIds: Ref<Set<number>> = ref(new Set())
+    const selectedCustomerIds: Ref<number[]> = ref([])
 
     async function getCourse() {
       const result = await supabase
@@ -85,8 +68,8 @@ export default defineComponent({
         return
       }
       course.value = result.body[0]
-      selectedCustomerIds.value = new Set(
-        course.value.customers.map(({ id }: any) => id)
+      selectedCustomerIds.value = course.value.customers.map(
+        ({ id }: any) => id
       )
     }
     getCourse()
@@ -106,24 +89,12 @@ export default defineComponent({
     getCustomers()
     onIonViewWillEnter(getCustomers)
 
-    function isCustomerChecked(id: number) {
-      return selectedCustomerIds.value.has(id)
-    }
-
-    function toggleCustomer(id: number) {
-      if (isCustomerChecked(id)) {
-        selectedCustomerIds.value.delete(id)
-      } else {
-        selectedCustomerIds.value.add(id)
-      }
-    }
-
     async function handleError(error: PostgrestError) {
       notify.error('Fehler beim Speichern der Änderungen.', error)
     }
 
     async function saveCustomers() {
-      const customerIds = Array.from(selectedCustomerIds.value.values())
+      const customerIds = selectedCustomerIds.value
       const courseId = course.value.id
 
       if (course.value.customers.length) {
@@ -155,8 +126,7 @@ export default defineComponent({
     return {
       course,
       customers,
-      isCustomerChecked,
-      toggleCustomer,
+      selectedCustomerIds,
       saveCustomers,
     }
   },

@@ -2,7 +2,7 @@ import { toastController } from '@ionic/vue'
 import { PostgrestError, ApiError } from '@supabase/supabase-js'
 
 export const notify = {
-  async error(message: string, error?: PostgrestError | ApiError) {
+  async error(message: string, error?: PostgrestError | ApiError | null) {
     const messageParts = [message]
     if (error) {
       messageParts.push(error.message)

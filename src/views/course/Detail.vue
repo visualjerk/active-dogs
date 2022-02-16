@@ -8,8 +8,29 @@
       <ion-card>
         <ion-card-header>
           <ion-card-title>Stunden</ion-card-title>
-          <ion-card-content> Stundentage </ion-card-content>
         </ion-card-header>
+        <ion-card-content v-if="!course.course_dates.length">
+          <ion-icon :icon="pawOutline"></ion-icon>
+          Der Kurs hat noch keine Stunden ...
+        </ion-card-content>
+        <ion-list v-else>
+          <ion-item
+            v-for="course_date in course.course_dates"
+            :key="course_date.id"
+          >
+            <ion-icon :icon="person" slot="start"></ion-icon>
+            <ion-label>
+              {{ course_date.date }}: {{ course_date.topics.name }}
+            </ion-label>
+          </ion-item>
+        </ion-list>
+        <ion-button
+          :router-link="`/tabs/course/${course.id}/createcoursedate`"
+          color="light"
+          class="ion-margin"
+        >
+          Stunde hinzufügen
+        </ion-button>
       </ion-card>
       <ion-card>
         <ion-card-header>
@@ -106,6 +127,13 @@ export default defineComponent({
           id,
           name,
           dogname
+        ),
+        course_dates (
+          id,
+          date,
+          topics (
+            name
+          )
         )
       `
         )
