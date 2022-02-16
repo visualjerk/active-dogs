@@ -1,66 +1,51 @@
 <template>
-  <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Kunden hinzufügen</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title>Kunden hinzufügen</ion-title>
-        </ion-toolbar>
-      </ion-header>
-      <div class="content">
-        <ion-item>
-          <ion-label position="stacked">Hundename</ion-label>
-          <ion-input v-model="dogname"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="stacked">Menschenname</ion-label>
-          <ion-input v-model="name"></ion-input>
-        </ion-item>
-        <ion-button expand="block" class="button" @click="createCustomer">
-          Kunden hinzufügen
-        </ion-button>
-        <ion-button
-          expand="block"
-          router-link="/tabs/customer"
-          router-direction="back"
-          color="light"
-        >
-          Abbrechen
-        </ion-button>
-      </div>
-    </ion-content>
-  </ion-page>
+  <PageLayout back-route="/tabs/customer" title="Kunden hinzufügen">
+    <div class="ion-padding">
+      <ion-item>
+        <ion-label position="stacked">Hundename</ion-label>
+        <ion-input v-model="dogname"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Menschenname</ion-label>
+        <ion-input v-model="name"></ion-input>
+      </ion-item>
+      <ion-button
+        expand="block"
+        @click="createCustomer"
+        class="ion-margin-vertical"
+      >
+        Kunden hinzufügen
+      </ion-button>
+      <ion-button
+        expand="block"
+        router-link="/tabs/customer"
+        router-direction="back"
+        color="light"
+        class="ion-margin-vertical"
+      >
+        Abbrechen
+      </ion-button>
+    </div>
+  </PageLayout>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, unref } from 'vue'
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
   IonButton,
   IonLabel,
   IonInput,
   IonItem,
   useIonRouter,
-  toastController,
 } from '@ionic/vue'
 import { supabase } from '@/api'
+import PageLayout from '@/components/PageLayout.vue'
+import { notify } from '@/notify'
 
 export default defineComponent({
   name: 'CustomerCreate',
   components: {
-    IonPage,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
+    PageLayout,
     IonButton,
     IonLabel,
     IonInput,
@@ -79,20 +64,10 @@ export default defineComponent({
         },
       ])
       if (error) {
-        const toast = await toastController.create({
-          message: 'Fehler beim Hinzufügen des Kunden.',
-          duration: 3000,
-          color: 'danger',
-        })
-        toast.present()
-        console.error(error)
+        notify.error('Fehler beim Hinzufügen des Kunden.', error)
         return
       }
-      const toast = await toastController.create({
-        message: 'Kunde erfolgreich hinzugefügt.',
-        duration: 3000,
-      })
-      toast.present()
+      notify.success('Kunde erfolgreich hinzugefügt.')
       dogname.value = ''
       name.value = ''
       ionRouter.push('/tabs/customer')
@@ -106,13 +81,3 @@ export default defineComponent({
   },
 })
 </script>
-
-<style scoped>
-.content {
-  padding: 1rem;
-}
-
-.button {
-  margin: 1rem 0;
-}
-</style>

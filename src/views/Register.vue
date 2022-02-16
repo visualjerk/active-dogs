@@ -42,8 +42,8 @@ import {
   IonButton,
   IonPage,
   useIonRouter,
-  toastController,
 } from '@ionic/vue'
+import { notify } from '@/notify'
 
 export default defineComponent({
   name: 'RegisterView',
@@ -68,13 +68,7 @@ export default defineComponent({
         password: unref(password),
       })
       if (error) {
-        const toast = await toastController.create({
-          message: `Fehler beim Registrieren: ${error.message}`,
-          duration: 3000,
-          color: 'danger',
-        })
-        toast.present()
-        console.error(error)
+        notify.error('Fehler beim Registrieren.', error)
         return
       }
       ionRouter.push('/register-success')

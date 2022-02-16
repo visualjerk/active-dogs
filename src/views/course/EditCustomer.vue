@@ -1,81 +1,63 @@
 <template>
-  <ion-page>
-    <ion-loading v-if="!course"></ion-loading>
-    <template v-else>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>{{ course.name }} - Teilnehmer</ion-title>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content :fullscreen="true">
-        <ion-header collapse="condense">
-          <ion-toolbar>
-            <ion-title>{{ course.name }} - Teilnehmer</ion-title>
-          </ion-toolbar>
-        </ion-header>
-        <ion-list>
-          <ion-item v-for="customer in customers" :key="customer.id">
-            <ion-label>{{ customer.dogname }} ({{ customer.name }})</ion-label>
-            <ion-checkbox
-              slot="end"
-              @update:modelValue="toggleCustomer(customer.id)"
-              :modelValue="isCustomerChecked(customer.id)"
-            >
-            </ion-checkbox>
-          </ion-item>
-        </ion-list>
-        <ion-button expand="block" @click="saveCustomers">
-          Änderungen speichern
-        </ion-button>
-        <ion-button
-          expand="block"
-          :router-link="`/tabs/course/${course.id}`"
-          router-direction="back"
-          color="light"
-        >
-          Zurück zum Kurs
-        </ion-button>
-      </ion-content>
+  <PageLayout
+    :back-route="`/tabs/course/${course?.id}`"
+    :loading="!course"
+    :title="`${course?.name} - Teilnehmer`"
+  >
+    <template v-if="course">
+      <ion-list>
+        <ion-item v-for="customer in customers" :key="customer.id">
+          <ion-checkbox
+            slot="start"
+            @update:modelValue="toggleCustomer(customer.id)"
+            :modelValue="isCustomerChecked(customer.id)"
+          >
+          </ion-checkbox>
+          <ion-label>{{ customer.dogname }} ({{ customer.name }})</ion-label>
+        </ion-item>
+      </ion-list>
+      <ion-button expand="block" @click="saveCustomers" class="ion-margin">
+        Änderungen speichern
+      </ion-button>
+      <ion-button
+        class="ion-margin"
+        expand="block"
+        :router-link="`/tabs/course/${course.id}`"
+        router-direction="back"
+        color="light"
+      >
+        Zurück zum Kurs
+      </ion-button>
     </template>
-  </ion-page>
+  </PageLayout>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, Ref } from 'vue'
 import {
-  IonPage,
-  IonLoading,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
   IonButton,
   IonCheckbox,
   IonItem,
   IonLabel,
   IonList,
-  toastController,
   useIonRouter,
   onIonViewWillEnter,
 } from '@ionic/vue'
 import { useRoute } from 'vue-router'
 import { supabase } from '@/api'
 import { PostgrestError } from '@supabase/postgrest-js'
+import PageLayout from '@/components/PageLayout.vue'
+import { notify } from '@/notify'
 
 export default defineComponent({
   name: 'CourseEditCustomer',
   components: {
-    IonHeader,
-    IonLoading,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonPage,
     IonButton,
     IonCheckbox,
     IonItem,
     IonLabel,
     IonList,
+    PageLayout,
   },
   setup() {
     const course = ref()
@@ -137,13 +119,7 @@ export default defineComponent({
     }
 
     async function handleError(error: PostgrestError) {
-      const toast = await toastController.create({
-        message: `Fehler beim Speichern der Änderungen: ${error.message}`,
-        duration: 5000,
-        color: 'danger',
-      })
-      toast.present()
-      console.error(error)
+      notify.error('Fehler beim Speichern der Änderungen.', error)
     }
 
     async function saveCustomers() {
@@ -172,11 +148,7 @@ export default defineComponent({
         }
       }
 
-      const toast = await toastController.create({
-        message: 'Teilnehmer erfolgreich gespeichert.',
-        duration: 3000,
-      })
-      toast.present()
+      notify.success('Teilnehmer erfolgreich gespeichert.')
       ionRouter.push(`/tabs/course/${course.value.id}`)
     }
 
@@ -190,9 +162,3 @@ export default defineComponent({
   },
 })
 </script>
-
-<style scoped>
-.button {
-  margin: 1rem;
-}
-</style>

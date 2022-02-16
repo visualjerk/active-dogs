@@ -41,9 +41,9 @@ import {
   IonButton,
   IonPage,
   useIonRouter,
-  toastController,
 } from '@ionic/vue'
 import { supabase } from '@/api'
+import { notify } from '@/notify'
 
 export default defineComponent({
   name: 'LoginView',
@@ -68,13 +68,7 @@ export default defineComponent({
         password: unref(password),
       })
       if (error) {
-        const toast = await toastController.create({
-          message: `Fehler beim Einloggen: ${error.message}`,
-          duration: 20000,
-          color: 'danger',
-        })
-        toast.present()
-        console.error(error)
+        notify.error('Fehler beim Einloggen.', error)
         return
       }
       ionRouter.push('/')

@@ -1,54 +1,34 @@
 <template>
-  <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Kurse</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Kurse</ion-title>
-        </ion-toolbar>
-      </ion-header>
-      <ion-button router-link="/tabs/course/create" class="button">
-        Neuen Kurs hinzufügen
-      </ion-button>
-      <ion-card
-        v-for="{ name, id } in courses"
-        :key="id"
-        button
-        :router-link="`/tabs/course/${id}`"
-      >
-        <ion-card-content> {{ name }} </ion-card-content>
-      </ion-card>
-    </ion-content>
-  </ion-page>
+  <PageLayout title="Kurse">
+    <ion-button router-link="/tabs/course/create" class="ion-margin">
+      Neuen Kurs hinzufügen
+    </ion-button>
+    <ion-card
+      v-for="{ name, id } in courses"
+      :key="id"
+      button
+      :router-link="`/tabs/course/${id}`"
+    >
+      <ion-card-content> {{ name }} </ion-card-content>
+    </ion-card>
+  </PageLayout>
 </template>
 
 <script lang="ts">
 import { defineComponent, Ref, ref } from 'vue'
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
   IonButton,
   IonCard,
   IonCardContent,
   onIonViewWillEnter,
 } from '@ionic/vue'
 import { supabase } from '@/api'
+import PageLayout from '@/components/PageLayout.vue'
 
 export default defineComponent({
   name: 'CourseOverview',
   components: {
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonPage,
+    PageLayout,
     IonButton,
     IonCard,
     IonCardContent,
@@ -76,9 +56,3 @@ export default defineComponent({
   },
 })
 </script>
-
-<style scoped>
-.button {
-  margin: 1rem;
-}
-</style>

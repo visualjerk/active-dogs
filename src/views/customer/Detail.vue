@@ -1,67 +1,43 @@
 <template>
-  <ion-page>
-    <ion-loading v-if="!customer"></ion-loading>
-    <template v-else>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>{{ customer.dogname }} ({{ customer.name }})</ion-title>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content :fullscreen="true">
-        <ion-header collapse="condense">
-          <ion-toolbar>
-            <ion-title>
-              {{ customer.dogname }} ({{ customer.name }})
-            </ion-title>
-          </ion-toolbar>
-        </ion-header>
-        <ion-button
-          expand="block"
-          @click="deleteCustomer"
-          class="button"
-          color="danger"
-        >
-          Kunde löschen
-        </ion-button>
-        <ion-button
-          expand="block"
-          router-link="/tabs/customer"
-          router-direction="back"
-          color="light"
-        >
-          Zurück zur Übersicht
-        </ion-button>
-      </ion-content>
+  <PageLayout
+    back-route="/tabs/customer"
+    :loading="!customer"
+    :title="`${customer?.dogname} (${customer?.name})`"
+  >
+    <template v-if="customer">
+      <ion-button
+        expand="block"
+        @click="deleteCustomer"
+        class="ion-margin"
+        color="danger"
+      >
+        Kunde löschen
+      </ion-button>
+      <ion-button
+        expand="block"
+        router-link="/tabs/customer"
+        router-direction="back"
+        class="ion-margin"
+        color="light"
+      >
+        Zurück zur Übersicht
+      </ion-button>
     </template>
-  </ion-page>
+  </PageLayout>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import {
-  IonPage,
-  IonLoading,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonButton,
-  toastController,
-  useIonRouter,
-  onIonViewWillEnter,
-} from '@ionic/vue'
+import { IonButton, useIonRouter, onIonViewWillEnter } from '@ionic/vue'
 import { useRoute } from 'vue-router'
 import { supabase } from '@/api'
+import PageLayout from '@/components/PageLayout.vue'
+import { notify } from '@/notify'
 
 export default defineComponent({
   name: 'CustomerDetail',
   components: {
-    IonHeader,
-    IonLoading,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonPage,
+    PageLayout,
     IonButton,
   },
   setup() {
@@ -88,20 +64,10 @@ export default defineComponent({
     async function deleteCustomer() {
       const { error } = await supabase.from('customers').delete().match({ id })
       if (error) {
-        const toast = await toastController.create({
-          message: 'Fehler beim Löschen des Kunden.',
-          duration: 3000,
-          color: 'danger',
-        })
-        toast.present()
-        console.error(error)
+        notify.error('Fehler beim Löschen des Kunden.', error)
         return
       }
-      const toast = await toastController.create({
-        message: 'Kunde erfolgreich gelöscht.',
-        duration: 3000,
-      })
-      toast.present()
+      notify.success('Kunde erfolgreich gelöscht.')
       ionRouter.push('/tabs/customer')
     }
 
@@ -112,9 +78,3 @@ export default defineComponent({
   },
 })
 </script>
-
-<style scoped>
-.button {
-  margin: 1rem;
-}
-</style>
