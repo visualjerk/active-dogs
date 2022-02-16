@@ -20,10 +20,11 @@
           >
             <ion-icon :icon="calendar" slot="start"></ion-icon>
             <ion-label>
-              {{ course_date.date }}: {{ course_date.topics.name }}
+              {{ new Date(course_date.date).toLocaleDateString() }}:
+              {{ course_date.topics.name }}
             </ion-label>
             <ion-badge slot="end">
-              {{ course_date.customers?.length }}
+              {{ course_date.cards?.length }}
             </ion-badge>
           </ion-item>
         </ion-list>
@@ -39,17 +40,33 @@
         <ion-card-header>
           <ion-card-title>Teilnehmer</ion-card-title>
         </ion-card-header>
-        <ion-card-content v-if="!course.customers.length">
+        <ion-card-content v-if="!cards.length">
           <ion-icon :icon="pawOutline"></ion-icon>
           Der Kurs ist noch leer ...
         </ion-card-content>
         <ion-list v-else>
-          <ion-item v-for="customer in course.customers" :key="customer.id">
+          <ion-item v-for="card in cards" :key="card.id">
             <ion-icon :icon="person" slot="start"></ion-icon>
-            <ion-label>{{ customer.dogname }} ({{ customer.name }})</ion-label>
-            <ion-badge slot="end">
-              {{ customer.course_dates?.length }} / 10
-            </ion-badge>
+            <ion-label
+              >{{ card.customers.dogname }} ({{
+                card.customers.name
+              }})</ion-label
+            >
+            <div slot="end" class="buttons">
+              <ion-button
+                :color="card.payed ? 'success' : 'light'"
+                @click="togglePayed(card)"
+              >
+                <ion-icon
+                  :icon="checkmarkCircle"
+                  v-if="card.payed"
+                  slot="start"
+                ></ion-icon>
+                <ion-icon :icon="closeCircle" v-else slot="start"></ion-icon>
+                bezahlt
+              </ion-button>
+              <ion-badge>{{ card.course_dates?.length }} / 10</ion-badge>
+            </div>
           </ion-item>
         </ion-list>
         <ion-button
@@ -82,7 +99,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref, unref } from 'vue'
 import {
   IonCard,
   IonCardContent,
@@ -99,7 +116,13 @@ import {
 } from '@ionic/vue'
 import { useRoute } from 'vue-router'
 import { supabase } from '@/api'
-import { person, pawOutline, calendar } from 'ionicons/icons'
+import {
+  person,
+  pawOutline,
+  calendar,
+  checkmarkCircle,
+  closeCircle,
+} from 'ionicons/icons'
 import PageLayout from '@/components/PageLayout.vue'
 import { notify } from '@/notify'
 
@@ -131,10 +154,14 @@ export default defineComponent({
           `
         name,
         id,
-        customers (
+        cards (
           id,
-          name,
-          dogname,
+          payed,
+          customers (
+            id,
+            name,
+            dogname
+          ),
           course_dates (
             id
           )
@@ -145,7 +172,7 @@ export default defineComponent({
           topics (
             name
           ),
-          customers (
+          cards (
             id
           )
         )
@@ -173,13 +200,43 @@ export default defineComponent({
       ionRouter.push('/tabs/course')
     }
 
+    async function togglePayed(card: any) {
+      const { error } = await supabase
+        .from('cards')
+        .update({
+          payed: !card.payed,
+        })
+        .match({ id: card.id })
+      if (error) {
+        notify.error('Fehler beim Ändern des Bezahlstatus.', error)
+        return
+      }
+      getCourse()
+    }
+
+    const cards = computed(() =>
+      unref(course).cards.sort((a: any, b: any) => a.id - b.id)
+    )
+
     return {
       course,
+      cards,
       deleteCourse,
+      togglePayed,
       person,
       pawOutline,
       calendar,
+      checkmarkCircle,
+      closeCircle,
     }
   },
 })
 </script>
+
+<style scoped>
+.buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+</style>

@@ -1,13 +1,15 @@
 <template>
   <ion-list>
-    <ion-item v-for="customer in customers" :key="customer.id">
+    <ion-item v-for="item in list" :key="item.id">
       <ion-checkbox
         slot="start"
-        @update:modelValue="toggleCustomer(customer.id)"
-        :modelValue="isCustomerChecked(customer.id)"
+        @update:modelValue="toggleCustomer(item.id)"
+        :modelValue="isCustomerChecked(item.id)"
       >
       </ion-checkbox>
-      <ion-label>{{ customer.dogname }} ({{ customer.name }})</ion-label>
+      <slot v-bind="item">
+        <ion-label>{{ item.dogname }} ({{ item.name }})</ion-label>
+      </slot>
     </ion-item>
   </ion-list>
 </template>
@@ -25,7 +27,7 @@ export default defineComponent({
     IonList,
   },
   props: {
-    customers: {
+    list: {
       type: Array,
       default: () => [],
     },

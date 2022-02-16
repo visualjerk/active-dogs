@@ -6,7 +6,7 @@
   >
     <template v-if="course">
       <CustomerInputList
-        :customers="customers"
+        :list="customers"
         v-model="selectedCustomerIds"
       ></CustomerInputList>
       <ion-button expand="block" @click="saveCustomers" class="ion-margin">
@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, Ref } from 'vue'
+import { defineComponent, ref, Ref, unref } from 'vue'
 import { IonButton, useIonRouter, onIonViewWillEnter } from '@ionic/vue'
 import { useRoute } from 'vue-router'
 import { supabase } from '@/api'
@@ -96,23 +96,35 @@ export default defineComponent({
     async function saveCustomers() {
       const customerIds = selectedCustomerIds.value
       const courseId = course.value.id
+      const oldCustomerIds = unref(course).customers.map(({ id }: any) => id)
+      const removedCustomerIds = oldCustomerIds.filter(
+        (id: number) => !customerIds.includes(id)
+      )
+      const newCustomerIds = customerIds.filter(
+        (id: number) => !oldCustomerIds.includes(id)
+      )
 
-      if (course.value.customers.length) {
+      if (removedCustomerIds.length) {
         const result = await supabase
-          .from('customers')
-          .update({ course_id: null })
+          .from('cards')
+          .delete()
           .eq('course_id', courseId)
+          .in('customer_id', removedCustomerIds)
         if (result.error) {
           handleError(result.error)
           return
         }
       }
 
-      if (customerIds.length) {
+      const mapCustomerToCourse = (customerId: number) => ({
+        customer_id: customerId,
+        course_id: courseId,
+      })
+
+      if (newCustomerIds.length) {
         const { error: error2 } = await supabase
-          .from('customers')
-          .update({ course_id: courseId })
-          .in('id', customerIds)
+          .from('cards')
+          .insert(newCustomerIds.map(mapCustomerToCourse))
         if (error2) {
           handleError(error2)
           return

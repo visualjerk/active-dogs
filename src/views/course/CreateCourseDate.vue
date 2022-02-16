@@ -19,9 +19,12 @@
             <ion-label color="dark">Teilnehmer</ion-label>
           </ion-item-divider>
           <CustomerInputList
-            :customers="course.customers"
-            v-model="selectedCustomerIds"
-          ></CustomerInputList>
+            :list="course.cards"
+            v-model="selectedCardIds"
+            v-slot="card"
+          >
+            {{ card.customers.dogname }} ({{ card.customers.name }})
+          </CustomerInputList>
         </ion-item-group>
         <ion-button
           expand="block"
@@ -78,7 +81,7 @@ export default defineComponent({
     const dateDefault = new Date().toISOString().split('T')[0]
     const date = ref(dateDefault)
     const topicName = ref('')
-    const selectedCustomerIds: Ref<number[]> = ref([])
+    const selectedCardIds: Ref<number[]> = ref([])
 
     const course = ref()
     const route = useRoute()
@@ -92,10 +95,13 @@ export default defineComponent({
           `
           name,
           id,
-          customers (
+          cards (
             id,
-            name,
-            dogname
+            customers (
+              id,
+              name,
+              dogname
+            )
           )
         `
         )
@@ -110,7 +116,7 @@ export default defineComponent({
     function init() {
       date.value = dateDefault
       topicName.value = ''
-      selectedCustomerIds.value = []
+      selectedCardIds.value = []
       getCourse()
     }
     init()
@@ -143,14 +149,14 @@ export default defineComponent({
         return
       }
 
-      const mapCustomerToCourseDate = (customerId: number) => ({
-        customer_id: customerId,
+      const mapCardToCourseDate = (cardId: number) => ({
+        card_id: cardId,
         course_date_id: courseDateData[0].id,
       })
 
       const { error } = await supabase
-        .from('customer_course_date')
-        .insert(unref(selectedCustomerIds).map(mapCustomerToCourseDate))
+        .from('card_course_date')
+        .insert(unref(selectedCardIds).map(mapCardToCourseDate))
       if (error) {
         notify.error('Fehler beim Hinzufügen der Teilnehmer.', error)
         return
@@ -162,9 +168,10 @@ export default defineComponent({
 
     return {
       course,
+
       date,
       topicName,
-      selectedCustomerIds,
+      selectedCardIds,
       createCourseDate,
     }
   },
