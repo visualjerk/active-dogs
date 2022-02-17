@@ -5,32 +5,31 @@
     :title="`${course?.name} - Stunde hinzufügen`"
   >
     <template v-if="course">
-      <div class="ion-padding">
+      <ion-list>
         <ion-item>
           <ion-label position="stacked">Datum</ion-label>
           <ion-input v-model="date" type="date" required />
         </ion-item>
+        <ion-list-header>
+          <ion-label color="dark">Thema</ion-label>
+        </ion-list-header>
         <ion-item>
-          <ion-label position="stacked">Thema</ion-label>
+          <ion-label position="stacked">Neues Thema</ion-label>
           <ion-input v-model="topicName" required />
         </ion-item>
-        <ion-item-group>
-          <ion-item-divider>
-            <ion-label color="dark">Teilnehmer</ion-label>
-          </ion-item-divider>
-          <CustomerInputList
-            :list="course.cards"
-            v-model="selectedCardIds"
-            v-slot="card"
-          >
-            {{ card.customers.dogname }} ({{ card.customers.name }})
-          </CustomerInputList>
-        </ion-item-group>
-        <ion-button
-          expand="block"
-          @click="createCourseDate"
-          class="ion-margin-vertical"
+        <RadioInputList :list="topics" v-model="selectedTopicId">
+        </RadioInputList>
+        <ion-list-header>
+          <ion-label color="dark">Teilnehmer</ion-label>
+        </ion-list-header>
+        <CustomerInputList
+          :list="course.cards"
+          v-model="selectedCardIds"
+          v-slot="card"
         >
+          {{ card.customers.dogname }} ({{ card.customers.name }})
+        </CustomerInputList>
+        <ion-button expand="block" @click="createCourseDate" class="ion-margin">
           Stunde hinzufügen
         </ion-button>
         <ion-button
@@ -38,11 +37,11 @@
           :router-link="`/tabs/course/${course.id}`"
           router-direction="back"
           color="light"
-          class="ion-margin-vertical"
+          class="ion-margin"
         >
           Abbrechen
         </ion-button>
-      </div>
+      </ion-list>
     </template>
   </PageLayout>
 </template>
@@ -51,9 +50,9 @@
 import { defineComponent, Ref, ref, unref } from 'vue'
 import {
   IonButton,
-  IonItemGroup,
-  IonItemDivider,
+  IonListHeader,
   IonLabel,
+  IonList,
   IonItem,
   IonInput,
   useIonRouter,
@@ -62,6 +61,7 @@ import {
 import { supabase } from '@/api'
 import PageLayout from '@/components/PageLayout.vue'
 import CustomerInputList from '@/components/CustomerInputList.vue'
+import RadioInputList from '@/components/RadioInputList.vue'
 import { notify } from '@/notify'
 import { useRoute } from 'vue-router'
 
@@ -70,17 +70,20 @@ export default defineComponent({
   components: {
     IonButton,
     IonLabel,
+    IonList,
     IonItem,
     PageLayout,
     IonInput,
-    IonItemGroup,
-    IonItemDivider,
+    IonListHeader,
     CustomerInputList,
+    RadioInputList,
   },
   setup() {
     const dateDefault = new Date().toISOString().split('T')[0]
     const date = ref(dateDefault)
     const topicName = ref('')
+    const topics: Ref<any[]> = ref([])
+    const selectedTopicId = ref()
     const selectedCardIds: Ref<number[]> = ref([])
 
     const course = ref()
@@ -113,11 +116,27 @@ export default defineComponent({
       }
       course.value = result.body[0]
     }
+
+    async function getTopics() {
+      const result = await supabase.from('topics').select(
+        `
+          name,
+          id
+        `
+      )
+      if (result.error) {
+        return
+      }
+      topics.value = result.body
+    }
+
     function init() {
       date.value = dateDefault
       topicName.value = ''
+      selectedTopicId.value = null
       selectedCardIds.value = []
       getCourse()
+      getTopics()
     }
     init()
     onIonViewWillEnter(init)
@@ -168,7 +187,8 @@ export default defineComponent({
 
     return {
       course,
-
+      topics,
+      selectedTopicId,
       date,
       topicName,
       selectedCardIds,
