@@ -63,7 +63,7 @@ export default defineComponent({
       }
       notify.success('Kurs erfolgreich hinzugefügt.')
       name.value = ''
-      ionRouter.push('/tabs/course')
+      ionRouter.navigate('/tabs/course', 'back', 'push')
     }
 
     return {

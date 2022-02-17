@@ -3,11 +3,11 @@
     <div class="ion-padding">
       <ion-item>
         <ion-label position="stacked">Hundename</ion-label>
-        <ion-input v-model="dogname"></ion-input>
+        <ion-input v-model="dogname" name="dogname"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label position="stacked">Menschenname</ion-label>
-        <ion-input v-model="name"></ion-input>
+        <ion-input v-model="name" name="name"></ion-input>
       </ion-item>
       <ion-button
         expand="block"
@@ -70,7 +70,7 @@ export default defineComponent({
       notify.success('Kunde erfolgreich hinzugefügt.')
       dogname.value = ''
       name.value = ''
-      ionRouter.push('/tabs/customer')
+      ionRouter.navigate('/tabs/customer', 'back', 'push')
     }
 
     return {

@@ -5,20 +5,19 @@
     :title="course?.name"
   >
     <template v-if="course">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>Stunden</ion-card-title>
-        </ion-card-header>
-        <ion-card-content v-if="!course.course_dates.length">
-          <ion-icon :icon="pawOutline"></ion-icon>
-          Der Kurs hat noch keine Stunden ...
-        </ion-card-content>
-        <ion-list v-else>
+      <ion-list>
+        <ion-list-header>
+          <ion-label>Stunden</ion-label>
+        </ion-list-header>
+        <ion-item v-if="!course.course_dates.length" lines="none">
+          <ion-icon :icon="pawOutline" slot="start"></ion-icon>
+          <ion-label>Der Kurs hat noch keine Stunden ...</ion-label>
+        </ion-item>
+        <template v-else>
           <ion-item
             v-for="course_date in course.course_dates"
             :key="course_date.id"
           >
-            <ion-icon :icon="calendar" slot="start"></ion-icon>
             <ion-label>
               {{ new Date(course_date.date).toLocaleDateString() }}:
               {{ course_date.topics.name }}
@@ -27,26 +26,26 @@
               {{ course_date.cards?.length }}
             </ion-badge>
           </ion-item>
-        </ion-list>
-        <ion-button
-          :router-link="`/tabs/course/${course.id}/createcoursedate`"
-          color="light"
-          class="ion-margin"
-        >
-          Stunde hinzufügen
-        </ion-button>
-      </ion-card>
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>Teilnehmer</ion-card-title>
-        </ion-card-header>
-        <ion-card-content v-if="!cards.length">
-          <ion-icon :icon="pawOutline"></ion-icon>
-          Der Kurs ist noch leer ...
-        </ion-card-content>
-        <ion-list v-else>
+        </template>
+      </ion-list>
+      <ion-button
+        :router-link="`/tabs/course/${course.id}/createcoursedate`"
+        color="light"
+        class="ion-margin"
+      >
+        Stunde hinzufügen
+      </ion-button>
+
+      <ion-list>
+        <ion-list-header>
+          <ion-label>Teilnehmer</ion-label>
+        </ion-list-header>
+        <ion-item v-if="!cards.length" lines="none">
+          <ion-icon :icon="pawOutline" slot="start"></ion-icon>
+          <ion-label>Der Kurs ist noch leer ...</ion-label>
+        </ion-item>
+        <template v-else>
           <ion-item v-for="card in cards" :key="card.id">
-            <ion-icon :icon="person" slot="start"></ion-icon>
             <ion-label
               >{{ card.customers.dogname }} ({{
                 card.customers.name
@@ -68,22 +67,14 @@
               <ion-badge>{{ card.course_dates?.length }} / 10</ion-badge>
             </div>
           </ion-item>
-        </ion-list>
-        <ion-button
-          :router-link="`/tabs/course/${course.id}/editcustomer`"
-          color="light"
-          class="ion-margin"
-        >
-          Teilnehmer bearbeiten
-        </ion-button>
-      </ion-card>
+        </template>
+      </ion-list>
       <ion-button
-        expand="block"
-        @click="deleteCourse"
+        :router-link="`/tabs/course/${course.id}/editcustomer`"
+        color="light"
         class="ion-margin"
-        color="danger"
       >
-        Kurs löschen
+        Teilnehmer bearbeiten
       </ion-button>
       <ion-button
         expand="block"
@@ -94,6 +85,14 @@
       >
         Zurück zur Übersicht
       </ion-button>
+      <ion-button
+        expand="block"
+        @click="deleteCourse"
+        class="ion-margin"
+        color="danger"
+      >
+        Kurs löschen
+      </ion-button>
     </template>
   </PageLayout>
 </template>
@@ -101,43 +100,32 @@
 <script lang="ts">
 import { computed, defineComponent, ref, unref } from 'vue'
 import {
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
   IonItem,
   IonLabel,
   IonList,
   IonIcon,
   IonButton,
+  IonListHeader,
   IonBadge,
   useIonRouter,
   onIonViewWillEnter,
 } from '@ionic/vue'
 import { useRoute } from 'vue-router'
 import { supabase } from '@/api'
-import {
-  person,
-  pawOutline,
-  calendar,
-  checkmarkCircle,
-  closeCircle,
-} from 'ionicons/icons'
+import { pawOutline, checkmarkCircle, closeCircle } from 'ionicons/icons'
 import PageLayout from '@/components/PageLayout.vue'
 import { notify } from '@/notify'
+import { alert } from '@/alert'
 
 export default defineComponent({
   name: 'CourseDetail',
   components: {
     PageLayout,
     IonButton,
-    IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonCardTitle,
     IonItem,
     IonLabel,
     IonList,
+    IonListHeader,
     IonIcon,
     IonBadge,
   },
@@ -191,13 +179,20 @@ export default defineComponent({
     onIonViewWillEnter(getCourse)
 
     async function deleteCourse() {
+      const confirm = await alert.confirm(
+        'Kurs wirklich löschen?',
+        `Soll der Kurs "${unref(course).name}" endgültig gelöscht werden?`
+      )
+      if (!confirm) {
+        return
+      }
       const { error } = await supabase.from('courses').delete().match({ id })
       if (error) {
         notify.error('Fehler beim Löschen des Kurses.', error)
         return
       }
       notify.success('Kurs erfolgreich gelöscht.')
-      ionRouter.push('/tabs/course')
+      ionRouter.navigate('/tabs/course', 'back', 'push')
     }
 
     async function togglePayed(card: any) {
@@ -223,9 +218,7 @@ export default defineComponent({
       cards,
       deleteCourse,
       togglePayed,
-      person,
       pawOutline,
-      calendar,
       checkmarkCircle,
       closeCircle,
     }

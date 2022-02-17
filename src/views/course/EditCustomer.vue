@@ -132,7 +132,7 @@ export default defineComponent({
       }
 
       notify.success('Teilnehmer erfolgreich gespeichert.')
-      ionRouter.push(`/tabs/course/${course.value.id}`)
+      ionRouter.navigate(`/tabs/course/${course.value.id}`, 'back', 'push')
     }
 
     return {

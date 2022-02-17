@@ -27,12 +27,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, unref } from 'vue'
 import { IonButton, useIonRouter, onIonViewWillEnter } from '@ionic/vue'
 import { useRoute } from 'vue-router'
 import { supabase } from '@/api'
 import PageLayout from '@/components/PageLayout.vue'
 import { notify } from '@/notify'
+import { alert } from '@/alert'
 
 export default defineComponent({
   name: 'CustomerDetail',
@@ -62,13 +63,20 @@ export default defineComponent({
     onIonViewWillEnter(getCustomer)
 
     async function deleteCustomer() {
+      const confirm = await alert.confirm(
+        'Kunde wirklich löschen?',
+        `Soll der Kunde "${unref(customer).name}" endgültig gelöscht werden?`
+      )
+      if (!confirm) {
+        return
+      }
       const { error } = await supabase.from('customers').delete().match({ id })
       if (error) {
         notify.error('Fehler beim Löschen des Kunden.', error)
         return
       }
       notify.success('Kunde erfolgreich gelöscht.')
-      ionRouter.push('/tabs/customer')
+      ionRouter.navigate('/tabs/customer', 'back', 'push')
     }
 
     return {
