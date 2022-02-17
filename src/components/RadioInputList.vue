@@ -6,7 +6,7 @@
       @ionChange="setOption"
     >
       <ion-item v-for="item in list" :key="item.id">
-        <ion-radio :value="item.id"> </ion-radio>
+        <ion-radio :value="item.id" slot="start"> </ion-radio>
         <slot v-bind="item">
           <ion-label>{{ item.name }}</ion-label>
         </slot>

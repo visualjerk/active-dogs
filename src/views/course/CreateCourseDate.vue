@@ -2,7 +2,7 @@
   <PageLayout
     :back-route="`/tabs/course/${course?.id}`"
     :loading="!course"
-    :title="`${course?.name} - Stunde hinzufügen`"
+    :title="`Stunde hinzufügen - ${course?.name}`"
   >
     <template v-if="course">
       <ion-list>
@@ -15,9 +15,11 @@
         </ion-list-header>
         <ion-item>
           <ion-label position="stacked">Neues Thema</ion-label>
-          <ion-input v-model="topicName" required />
+          <ion-input v-model="topicName" />
         </ion-item>
-        <RadioInputList :list="topics" v-model="selectedTopicId">
+        <RadioInputList :list="topics" v-model="selectedTopicId" v-slot="topic">
+          <ion-label>{{ topic.name }}</ion-label>
+          <ion-badge slot="end">{{ knownByNumberOfCards(topic) }}</ion-badge>
         </RadioInputList>
         <ion-list-header>
           <ion-label color="dark">Teilnehmer</ion-label>
@@ -27,7 +29,14 @@
           v-model="selectedCardIds"
           v-slot="card"
         >
-          {{ card.customers.dogname }} ({{ card.customers.name }})
+          <ion-label>
+            {{ card.customers.dogname }} ({{ card.customers.name }})
+          </ion-label>
+          <ion-icon
+            slot="end"
+            v-if="knowsSelectedTopic(card)"
+            :icon="flashOutline"
+          ></ion-icon>
         </CustomerInputList>
         <ion-button expand="block" @click="createCourseDate" class="ion-margin">
           Stunde hinzufügen
@@ -47,7 +56,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref, unref } from 'vue'
+import { defineComponent, Ref, ref, unref, watch } from 'vue'
 import {
   IonButton,
   IonListHeader,
@@ -55,6 +64,8 @@ import {
   IonList,
   IonItem,
   IonInput,
+  IonIcon,
+  IonBadge,
   useIonRouter,
   onIonViewWillEnter,
 } from '@ionic/vue'
@@ -64,6 +75,7 @@ import CustomerInputList from '@/components/CustomerInputList.vue'
 import RadioInputList from '@/components/RadioInputList.vue'
 import { notify } from '@/notify'
 import { useRoute } from 'vue-router'
+import { flashOutline } from 'ionicons/icons'
 
 export default defineComponent({
   name: 'CourseCreateCourseDate',
@@ -72,8 +84,10 @@ export default defineComponent({
     IonLabel,
     IonList,
     IonItem,
+    IonIcon,
     PageLayout,
     IonInput,
+    IonBadge,
     IonListHeader,
     CustomerInputList,
     RadioInputList,
@@ -83,8 +97,14 @@ export default defineComponent({
     const date = ref(dateDefault)
     const topicName = ref('')
     const topics: Ref<any[]> = ref([])
-    const selectedTopicId = ref()
+    const selectedTopicId = ref(null)
     const selectedCardIds: Ref<number[]> = ref([])
+
+    watch(topicName, () => {
+      if (unref(topicName)) {
+        selectedTopicId.value = null
+      }
+    })
 
     const course = ref()
     const route = useRoute()
@@ -104,6 +124,11 @@ export default defineComponent({
               id,
               name,
               dogname
+            ),
+            course_dates (
+              topics (
+                id
+              )
             )
           )
         `
@@ -142,16 +167,20 @@ export default defineComponent({
     onIonViewWillEnter(init)
 
     async function createCourseDate() {
-      const { error: topicError, data: topicData } = await supabase
-        .from('topics')
-        .insert([
-          {
-            name: unref(topicName),
-          },
-        ])
-      if (topicError || !topicData?.length) {
-        notify.error('Fehler beim Erstellen des Themas', topicError)
-        return
+      let topicId = unref(selectedTopicId)
+      if (topicId == null) {
+        const { error: topicError, data: topicData } = await supabase
+          .from('topics')
+          .insert([
+            {
+              name: unref(topicName),
+            },
+          ])
+        if (topicError || !topicData?.length) {
+          notify.error('Fehler beim Erstellen des Themas', topicError)
+          return
+        }
+        topicId = topicData[0].id
       }
 
       const { error: courseDateError, data: courseDateData } = await supabase
@@ -160,7 +189,7 @@ export default defineComponent({
           {
             date: unref(date),
             course_id: unref(course).id,
-            topic_id: topicData[0].id,
+            topic_id: topicId,
           },
         ])
       if (courseDateError || !courseDateData?.length) {
@@ -185,6 +214,26 @@ export default defineComponent({
       ionRouter.navigate(`/tabs/course/${unref(course).id}`, 'back', 'push')
     }
 
+    function knowsTopic(card: any, topicId: number | null): boolean {
+      return card.course_dates.some(
+        (courseDate: any) => courseDate.topics.id === topicId
+      )
+    }
+
+    function knowsSelectedTopic(card: any) {
+      return knowsTopic(card, unref(selectedTopicId))
+    }
+
+    function knownByNumberOfCards(topic: any) {
+      let count = 0
+      unref(course).cards.forEach((card: any) => {
+        if (knowsTopic(card, topic.id)) {
+          count++
+        }
+      })
+      return count
+    }
+
     return {
       course,
       topics,
@@ -193,6 +242,9 @@ export default defineComponent({
       topicName,
       selectedCardIds,
       createCourseDate,
+      knowsSelectedTopic,
+      knownByNumberOfCards,
+      flashOutline,
     }
   },
 })
