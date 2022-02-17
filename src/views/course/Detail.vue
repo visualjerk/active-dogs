@@ -17,6 +17,8 @@
           <ion-item
             v-for="course_date in course.course_dates"
             :key="course_date.id"
+            button
+            :href="`/tabs/course/${course.id}/coursedatedetail/${course_date.id}`"
           >
             <ion-label>
               {{ new Date(course_date.date).toLocaleDateString() }}:
@@ -62,7 +64,7 @@
                   slot="start"
                 ></ion-icon>
                 <ion-icon :icon="closeCircle" v-else slot="start"></ion-icon>
-                bezahlt
+                €
               </ion-button>
               <ion-badge>{{ card.course_dates?.length }} / 10</ion-badge>
             </div>
