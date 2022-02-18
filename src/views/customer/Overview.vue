@@ -1,6 +1,10 @@
 <template>
   <PageLayout title="Kunden">
-    <ion-button router-link="/tabs/customer/create" class="ion-margin">
+    <ion-button
+      router-link="/tabs/customer/create"
+      expand="block"
+      class="ion-margin"
+    >
       Neuen Kunden hinzufügen
     </ion-button>
     <ion-card
