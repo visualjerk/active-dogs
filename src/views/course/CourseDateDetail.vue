@@ -38,9 +38,9 @@
             :icon="flashOutline"
           ></ion-icon>
         </CustomerInputList>
-        <!-- <ion-button expand="block" @click="updateCourseDate" class="ion-margin">
-          Stunde bearbeiten
-        </ion-button> -->
+        <ion-button expand="block" @click="updateCourseDate" class="ion-margin">
+          Änderungen speichern
+        </ion-button>
         <ion-button
           expand="block"
           :router-link="`/tabs/course/${course.id}`"
@@ -98,6 +98,7 @@ export default defineComponent({
     const topics: Ref<any[]> = ref([])
     const selectedTopicId = ref(null)
     const selectedCardIds: Ref<number[]> = ref([])
+    let oldCardIds: number[] = []
 
     watch(topicName, () => {
       if (unref(topicName)) {
@@ -159,6 +160,7 @@ export default defineComponent({
       course.value = unref(courseDate).courses
       selectedTopicId.value = unref(courseDate).topics.id
       selectedCardIds.value = unref(courseDate).cards.map(({ id }: any) => id)
+      oldCardIds = unref(selectedCardIds)
       date.value = new Date(unref(courseDate).date).toISOString().split('T')[0]
     }
 
@@ -199,34 +201,56 @@ export default defineComponent({
         topicId = topicData[0].id
       }
 
-      const { error: courseDateError, data: courseDateData } = await supabase
+      const { error: courseDateError } = await supabase
         .from('course_dates')
-        .insert([
+        .update([
           {
             date: unref(date),
-            course_id: unref(course).id,
             topic_id: topicId,
           },
         ])
-      if (courseDateError || !courseDateData?.length) {
-        notify.error('Fehler beim Erstellen der Stunde.', courseDateError)
+        .match({
+          id: courseDateId,
+        })
+      if (courseDateError) {
+        notify.error('Fehler beim Speichern der Stunde.', courseDateError)
         return
       }
 
-      const mapCardToCourseDate = (cardId: number) => ({
-        card_id: cardId,
-        course_date_id: courseDateData[0].id,
-      })
+      const newCardIds = unref(selectedCardIds).filter(
+        (id) => !oldCardIds.includes(id)
+      )
+      const deleteCardIds = oldCardIds.filter(
+        (id) => !unref(selectedCardIds).includes(id)
+      )
 
-      const { error } = await supabase
-        .from('card_course_date')
-        .insert(unref(selectedCardIds).map(mapCardToCourseDate))
-      if (error) {
-        notify.error('Fehler beim Hinzufügen der Teilnehmer.', error)
-        return
+      if (deleteCardIds.length) {
+        const { error } = await supabase
+          .from('card_course_date')
+          .delete()
+          .in('id', deleteCardIds)
+        if (error) {
+          notify.error('Fehler beim Hinzufügen der Teilnehmer.', error)
+          return
+        }
       }
 
-      notify.success('Kurs erfolgreich hinzugefügt.')
+      if (newCardIds.length) {
+        const mapCardToCourseDate = (cardId: number) => ({
+          card_id: cardId,
+          course_date_id: courseDateId,
+        })
+
+        const { error } = await supabase
+          .from('card_course_date')
+          .insert(newCardIds.map(mapCardToCourseDate))
+        if (error) {
+          notify.error('Fehler beim Hinzufügen der Teilnehmer.', error)
+          return
+        }
+      }
+
+      notify.success('Kurs erfolgreich gespeichert.')
       ionRouter.navigate(`/tabs/course/${unref(course).id}`, 'back', 'push')
     }
 
