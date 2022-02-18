@@ -2,7 +2,7 @@
   <ion-page>
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
-      <ion-tab-bar slot="bottom">
+      <ion-tab-bar color="light" slot="bottom">
         <ion-tab-button tab="course" href="/tabs/course">
           <ion-icon :icon="calendar" />
           <ion-label>Kurse</ion-label>
