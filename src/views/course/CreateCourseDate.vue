@@ -17,9 +17,13 @@
           <ion-label position="stacked">Neues Thema</ion-label>
           <ion-input v-model="topicName" />
         </ion-item>
-        <RadioInputList :list="topics" v-model="selectedTopicId" v-slot="topic">
+        <RadioInputList
+          :list="sortedTopics"
+          v-model="selectedTopicId"
+          v-slot="topic"
+        >
           <ion-label>{{ topic.name }}</ion-label>
-          <ion-badge slot="end">{{ knownByNumberOfCards(topic) }}</ion-badge>
+          <ion-badge slot="end">{{ topic.cardsVisited }}</ion-badge>
         </RadioInputList>
         <ion-list-header>
           <ion-label color="dark">Teilnehmer</ion-label>
@@ -34,7 +38,7 @@
           </ion-label>
           <ion-icon
             slot="end"
-            v-if="knowsSelectedTopic(card)"
+            v-if="visitedSelectedTopic(card)"
             :icon="flashOutline"
           ></ion-icon>
         </CustomerInputList>
@@ -56,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref, unref, watch } from 'vue'
+import { computed, defineComponent, Ref, ref, unref, watch } from 'vue'
 import {
   IonButton,
   IonListHeader,
@@ -220,11 +224,11 @@ export default defineComponent({
       )
     }
 
-    function knowsSelectedTopic(card: any) {
+    function visitedSelectedTopic(card: any) {
       return knowsTopic(card, unref(selectedTopicId))
     }
 
-    function knownByNumberOfCards(topic: any) {
+    function getVisitedCards(topic: any) {
       let count = 0
       unref(course).cards.forEach((card: any) => {
         if (knowsTopic(card, topic.id)) {
@@ -234,16 +238,24 @@ export default defineComponent({
       return count
     }
 
+    const sortedTopics = computed(() => {
+      return unref(topics)
+        .map((topic) => ({
+          ...topic,
+          cardsVisited: getVisitedCards(topic),
+        }))
+        .sort((a, b) => a.cardsVisited - b.cardsVisited)
+    })
+
     return {
       course,
-      topics,
+      sortedTopics,
       selectedTopicId,
       date,
       topicName,
       selectedCardIds,
       createCourseDate,
-      knowsSelectedTopic,
-      knownByNumberOfCards,
+      visitedSelectedTopic,
       flashOutline,
     }
   },
