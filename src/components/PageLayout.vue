@@ -3,7 +3,7 @@
     <ion-loading v-if="loading"></ion-loading>
     <template v-else>
       <ion-header>
-        <ion-toolbar color="dark">
+        <ion-toolbar>
           <ion-buttons slot="start">
             <ion-back-button :default-href="backRoute"></ion-back-button>
           </ion-buttons>
