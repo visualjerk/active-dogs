@@ -2,28 +2,12 @@ import { supabase } from '@/api'
 import { createRouter, createWebHistory } from '@ionic/vue-router'
 import { RouteRecordRaw } from 'vue-router'
 import Login from '../views/Login.vue'
-import Register from '../views/Register.vue'
-import RegisterSuccess from '../views/RegisterSuccess.vue'
 import TabsPage from '../views/TabsPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/login',
     component: Login,
-    meta: {
-      public: true,
-    },
-  },
-  {
-    path: '/register',
-    component: Register,
-    meta: {
-      public: true,
-    },
-  },
-  {
-    path: '/register-success',
-    component: RegisterSuccess,
     meta: {
       public: true,
     },

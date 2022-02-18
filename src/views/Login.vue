@@ -15,14 +15,6 @@
           <ion-button expand="block" class="button" @click="login">
             Einloggen
           </ion-button>
-          <ion-button
-            expand="block"
-            router-link="register"
-            router-direction="forward"
-            color="light"
-          >
-            Neuen Account registrieren
-          </ion-button>
         </ion-card-content>
       </ion-card>
     </div>
