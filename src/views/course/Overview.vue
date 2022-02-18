@@ -1,15 +1,22 @@
 <template>
   <PageLayout title="Kurse">
-    <ion-button router-link="/tabs/course/create" class="ion-margin">
+    <ion-button
+      router-link="/tabs/course/create"
+      class="ion-margin"
+      expand="block"
+    >
       Neuen Kurs hinzufügen
     </ion-button>
     <ion-card
-      v-for="{ name, id } in courses"
+      v-for="{ name, id, cards } in courses"
       :key="id"
       button
       :router-link="`/tabs/course/${id}`"
     >
-      <ion-card-content> {{ name }} </ion-card-content>
+      <ion-card-header>
+        <ion-card-title>{{ name }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>{{ cards.length }} Teilnehmer</ion-card-content>
     </ion-card>
   </PageLayout>
 </template>
@@ -19,6 +26,8 @@ import { defineComponent, Ref, ref } from 'vue'
 import {
   IonButton,
   IonCard,
+  IonCardHeader,
+  IonCardTitle,
   IonCardContent,
   onIonViewWillEnter,
 } from '@ionic/vue'
@@ -31,6 +40,8 @@ export default defineComponent({
     PageLayout,
     IonButton,
     IonCard,
+    IonCardHeader,
+    IonCardTitle,
     IonCardContent,
   },
   setup() {
@@ -39,7 +50,15 @@ export default defineComponent({
     async function getCourses() {
       const result = await supabase
         .from('courses')
-        .select(`name, id`)
+        .select(
+          `
+          name,
+          id,
+          cards (
+            id
+          )
+        `
+        )
         .order('name')
       if (result.error) {
         return

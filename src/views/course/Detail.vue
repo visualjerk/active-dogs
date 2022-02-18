@@ -9,13 +9,13 @@
         <ion-list-header>
           <ion-label>Stunden</ion-label>
         </ion-list-header>
-        <ion-item v-if="!course.course_dates.length" lines="none">
+        <ion-item v-if="!visibleCourseDates.length" lines="none">
           <ion-icon :icon="pawOutline" slot="start"></ion-icon>
           <ion-label>Der Kurs hat noch keine Stunden ...</ion-label>
         </ion-item>
         <template v-else>
           <ion-item
-            v-for="course_date in course.course_dates"
+            v-for="course_date in visibleCourseDates"
             :key="course_date.id"
             button
             :href="`/tabs/course/${course.id}/coursedatedetail/${course_date.id}`"
@@ -28,12 +28,23 @@
               {{ course_date.cards?.length }}
             </ion-badge>
           </ion-item>
+          <ion-button
+            v-if="showCourseDateExpand || showAllCourseDates"
+            @click="showAllCourseDates = !showAllCourseDates"
+            class="ion-margin-horizontal ion-margin-top"
+            size="small"
+            fill="clear"
+          >
+            <template v-if="showAllCourseDates"> Weniger anzeigen </template>
+            <template v-else> Alle anzeigen </template>
+          </ion-button>
         </template>
       </ion-list>
       <ion-button
         :router-link="`/tabs/course/${course.id}/createcoursedate`"
         color="light"
         class="ion-margin"
+        expand="block"
       >
         Stunde hinzufügen
       </ion-button>
@@ -74,7 +85,8 @@
       <ion-button
         :router-link="`/tabs/course/${course.id}/editcustomer`"
         color="light"
-        class="ion-margin"
+        class="ion-margin ion-margin-bottom-large"
+        expand="block"
       >
         Teilnehmer bearbeiten
       </ion-button>
@@ -137,40 +149,53 @@ export default defineComponent({
     const ionRouter = useIonRouter()
     const { id } = route.params
 
+    const showAllCourseDates = ref(false)
+    const courseDates = computed(() => unref(course)?.course_dates || [])
+    const visibleCourseDates = computed(() => {
+      if (unref(showAllCourseDates)) {
+        return unref(courseDates)
+      }
+      return unref(courseDates).slice(0, 3)
+    })
+    const showCourseDateExpand = computed(
+      () => unref(courseDates).length > unref(visibleCourseDates).length
+    )
+
     async function getCourse() {
       const result = await supabase
         .from('courses')
         .select(
           `
-        name,
-        id,
-        cards (
+          name,
           id,
-          payed,
-          customers (
+          cards (
             id,
-            name,
-            dogname
+            payed,
+            customers (
+              id,
+              name,
+              dogname
+            ),
+            course_dates (
+              id
+            )
           ),
           course_dates (
-            id
+            id,
+            date,
+            topics (
+              name
+            ),
+            cards (
+              id
+            )
           )
-        ),
-        course_dates (
-          id,
-          date,
-          topics (
-            name
-          ),
-          cards (
-            id
-          )
-        )
-      `
+        `
         )
         .match({
           id,
         })
+        .order('date', { foreignTable: 'course_dates', ascending: false })
 
       if (result.error) {
         return
@@ -217,6 +242,9 @@ export default defineComponent({
 
     return {
       course,
+      visibleCourseDates,
+      showAllCourseDates,
+      showCourseDateExpand,
       cards,
       deleteCourse,
       togglePayed,
@@ -233,5 +261,9 @@ export default defineComponent({
   display: flex;
   gap: 1rem;
   align-items: center;
+}
+
+.ion-margin-bottom-large {
+  margin-bottom: 3rem;
 }
 </style>

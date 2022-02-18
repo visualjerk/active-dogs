@@ -3,8 +3,8 @@
 ## Course Dates
 
 - [x] Edit course_dates
-- [ ] Sort course_dates by date
-- [ ] Truncate course_dates to 3-4 items (expandable)
+- [x] Sort course_dates by date
+- [x] Truncate course_dates to 3-4 items (expandable)
 - [ ] Sort topics by least visited
 
 ## Cards / Customers
