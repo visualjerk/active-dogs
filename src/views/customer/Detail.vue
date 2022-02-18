@@ -1,6 +1,6 @@
 <template>
   <PageLayout
-    back-route="/tabs/customer"
+    back-route="tabs/customer"
     :loading="!customer"
     :title="`${customer?.dogname} (${customer?.name})`"
   >

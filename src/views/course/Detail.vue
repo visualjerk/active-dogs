@@ -1,9 +1,5 @@
 <template>
-  <PageLayout
-    back-route="/tabs/course"
-    :loading="!course"
-    :title="course?.name"
-  >
+  <PageLayout back-route="tabs/course" :loading="!course" :title="course?.name">
     <template v-if="course">
       <ion-list>
         <ion-list-header>
@@ -18,7 +14,7 @@
             v-for="course_date in visibleCourseDates"
             :key="course_date.id"
             button
-            :href="`/tabs/course/${course.id}/coursedatedetail/${course_date.id}`"
+            :router-link="`/tabs/course/${course.id}/coursedatedetail/${course_date.id}`"
           >
             <ion-label>
               {{ new Date(course_date.date).toLocaleDateString() }}:

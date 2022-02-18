@@ -1,5 +1,5 @@
 <template>
-  <PageLayout back-route="/tabs/customer" title="Kunden hinzufügen">
+  <PageLayout back-route="tabs/customer" title="Kunden hinzufügen">
     <div class="ion-padding">
       <ion-item>
         <ion-label position="stacked">Hundename</ion-label>

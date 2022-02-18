@@ -1,5 +1,5 @@
 <template>
-  <PageLayout back-route="/tabs/course" title="Kurs hinzufügen">
+  <PageLayout back-route="tabs/course" title="Kurs hinzufügen">
     <div class="ion-padding">
       <ion-item>
         <ion-label position="stacked">Name</ion-label>
