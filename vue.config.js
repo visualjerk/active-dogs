@@ -1,6 +1,3 @@
 module.exports = {
-  publicPath:
-    process.env.NODE_ENV === 'production'
-      ? 'https://visualjerk.github.io/active-dogs/'
-      : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/active-dogs/' : '/',
 }
