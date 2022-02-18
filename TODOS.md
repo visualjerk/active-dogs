@@ -12,3 +12,8 @@
 - [ ] Card details view
 - [ ] Card delete in details view
 - [ ] Add card instead of edit customers
+
+## Release
+
+- [ ] Make available on active dogs or github
+- [ ] Make available as PWA
