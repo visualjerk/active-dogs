@@ -5,9 +5,7 @@
       <ion-header>
         <ion-toolbar color="dark">
           <ion-buttons slot="start">
-            <ion-back-button
-              :default-href="backRoute ? `${baseUrl}${backRoute}` : null"
-            ></ion-back-button>
+            <ion-back-button :default-href="backRoute"></ion-back-button>
           </ion-buttons>
           <ion-title>{{ title }}</ion-title>
         </ion-toolbar>
@@ -67,12 +65,6 @@ export default defineComponent({
       type: String,
       default: '',
     },
-  },
-  setup() {
-    const baseUrl = process.env.BASE_URL
-    return {
-      baseUrl,
-    }
   },
 })
 </script>

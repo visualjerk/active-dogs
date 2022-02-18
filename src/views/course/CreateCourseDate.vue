@@ -1,6 +1,6 @@
 <template>
   <PageLayout
-    :back-route="`tabs/course/${course?.id}`"
+    :back-route="`/tabs/course/${course?.id}`"
     :loading="!course"
     :title="`Stunde hinzufügen - ${course?.name}`"
   >

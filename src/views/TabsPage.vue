@@ -3,11 +3,11 @@
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar color="light" slot="bottom">
-        <ion-tab-button tab="course" :href="`${baseUrl}tabs/course`">
+        <ion-tab-button tab="course" href="/tabs/course">
           <ion-icon :icon="calendar" />
           <ion-label>Kurse</ion-label>
         </ion-tab-button>
-        <ion-tab-button tab="customer" :href="`${baseUrl}tabs/customer`">
+        <ion-tab-button tab="customer" href="/tabs/customer">
           <ion-icon :icon="people" />
           <ion-label>Kunden</ion-label>
         </ion-tab-button>
@@ -41,10 +41,7 @@ export default defineComponent({
     IonRouterOutlet,
   },
   setup() {
-    const baseUrl = process.env.BASE_URL
-
     return {
-      baseUrl,
       calendar,
       people,
     }

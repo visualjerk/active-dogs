@@ -1,5 +1,9 @@
 <template>
-  <PageLayout back-route="tabs/course" :loading="!course" :title="course?.name">
+  <PageLayout
+    back-route="/tabs/course"
+    :loading="!course"
+    :title="course?.name"
+  >
     <template v-if="course">
       <ion-list>
         <ion-list-header>
