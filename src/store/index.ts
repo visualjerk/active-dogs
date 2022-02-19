@@ -8,3 +8,7 @@ export const state = reactive({
 window.addEventListener('online', () => {
   state.offline = false
 })
+
+window.addEventListener('offline', () => {
+  state.offline = true
+})

@@ -43,7 +43,7 @@ export default defineComponent({
         }
         alert.confirm(
           'Keine Internetverbindung',
-          'Die App hat keine Internetverbindung. Einträge können deshalb nicht bearbeitet werden. Bitte lade neu, wenn die Verbindung wieder hergestellt wurde.'
+          'Die App hat keine Internetverbindung und funktioniert deshalb nur eingeschränkt. Bitte lade neu, wenn die Verbindung wieder hergestellt wurde.'
         )
       },
       {
