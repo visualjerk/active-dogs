@@ -6,6 +6,7 @@
 - [x] Sort course_dates by date
 - [x] Truncate course_dates to 3-4 items (expandable)
 - [x] Sort topics by least visited
+- [ ] Delete course_date
 
 ## Cards / Customers
 
