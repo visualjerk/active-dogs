@@ -17,4 +17,4 @@
 ## Release
 
 - [x] Make available on active dogs or github
-- [ ] Make available as PWA
+- [x] Make available as PWA
