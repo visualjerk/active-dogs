@@ -18,7 +18,7 @@ jobs:
           node-version: 16
           cache: 'npm'
       - run: npm ci
-      - run: npm run build
+      - run: BASE_URL=/active-dogs/ npm run build
       - run: cp ./dist/index.html ./dist/404.html
 
       - name: Deploy
