@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import { register } from 'register-service-worker'
+import { state } from '@/store'
 
 if (process.env.NODE_ENV === 'production') {
   register(`${process.env.BASE_URL}service-worker.js`, {
@@ -20,9 +21,11 @@ if (process.env.NODE_ENV === 'production') {
       console.log('New content is downloading.')
     },
     updated() {
+      state.updateAvailable = true
       console.log('New content is available; please refresh.')
     },
     offline() {
+      state.offline = true
       console.log(
         'No internet connection found. App is running in offline mode.'
       )

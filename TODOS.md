@@ -18,3 +18,4 @@
 
 - [x] Make available on active dogs or github
 - [x] Make available as PWA
+- [x] Add update info
