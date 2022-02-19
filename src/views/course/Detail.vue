@@ -130,6 +130,7 @@ import { pawOutline, checkmarkCircle, closeCircle } from 'ionicons/icons'
 import PageLayout from '@/components/PageLayout.vue'
 import { notify } from '@/notify'
 import { alert } from '@/alert'
+import { state } from '@/store'
 
 export default defineComponent({
   name: 'CourseDetail',
@@ -206,6 +207,10 @@ export default defineComponent({
     onIonViewWillEnter(getCourse)
 
     async function deleteCourse() {
+      if (state.offline) {
+        notify.error('Fehler beim Löschen. Keine Internetverbindung.')
+        return
+      }
       const confirm = await alert.confirm(
         'Kurs wirklich löschen?',
         `Soll der Kurs "${unref(course).name}" endgültig gelöscht werden?`

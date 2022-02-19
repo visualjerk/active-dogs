@@ -76,6 +76,7 @@ import RadioInputList from '@/components/RadioInputList.vue'
 import { notify } from '@/notify'
 import { useRoute } from 'vue-router'
 import { flashOutline } from 'ionicons/icons'
+import { state } from '@/store'
 
 export default defineComponent({
   name: 'CourseCourseDateDetail',
@@ -185,6 +186,10 @@ export default defineComponent({
     onIonViewWillEnter(init)
 
     async function updateCourseDate() {
+      if (state.offline) {
+        notify.error('Fehler beim Speichern. Keine Internetverbindung.')
+        return
+      }
       let topicId = unref(selectedTopicId)
       if (topicId == null) {
         const { error: topicError, data: topicData } = await supabase

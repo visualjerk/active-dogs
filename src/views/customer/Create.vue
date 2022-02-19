@@ -41,6 +41,7 @@ import {
 import { supabase } from '@/api'
 import PageLayout from '@/components/PageLayout.vue'
 import { notify } from '@/notify'
+import { state } from '@/store'
 
 export default defineComponent({
   name: 'CustomerCreate',
@@ -57,6 +58,10 @@ export default defineComponent({
     const ionRouter = useIonRouter()
 
     async function createCustomer() {
+      if (state.offline) {
+        notify.error('Fehler beim Erstellen. Keine Internetverbindung.')
+        return
+      }
       const { error } = await supabase.from('customers').insert([
         {
           dogname: unref(dogname),

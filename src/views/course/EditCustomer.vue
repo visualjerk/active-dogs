@@ -34,6 +34,7 @@ import { PostgrestError } from '@supabase/postgrest-js'
 import PageLayout from '@/components/PageLayout.vue'
 import CustomerInputList from '@/components/CustomerInputList.vue'
 import { notify } from '@/notify'
+import { state } from '@/store'
 
 export default defineComponent({
   name: 'CourseEditCustomer',
@@ -94,6 +95,10 @@ export default defineComponent({
     }
 
     async function saveCustomers() {
+      if (state.offline) {
+        notify.error('Fehler beim Speichern. Keine Internetverbindung.')
+        return
+      }
       const customerIds = selectedCustomerIds.value
       const courseId = course.value.id
       const oldCustomerIds = unref(course).customers.map(({ id }: any) => id)

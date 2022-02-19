@@ -34,6 +34,7 @@ import { supabase } from '@/api'
 import PageLayout from '@/components/PageLayout.vue'
 import { notify } from '@/notify'
 import { alert } from '@/alert'
+import { state } from '@/store'
 
 export default defineComponent({
   name: 'CustomerDetail',
@@ -63,6 +64,10 @@ export default defineComponent({
     onIonViewWillEnter(getCustomer)
 
     async function deleteCustomer() {
+      if (state.offline) {
+        notify.error('Fehler beim Löschen. Keine Internetverbindung.')
+        return
+      }
       const confirm = await alert.confirm(
         'Kunde wirklich löschen?',
         `Soll der Kunde "${unref(customer).name}" endgültig gelöscht werden?`
