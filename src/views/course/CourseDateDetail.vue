@@ -50,6 +50,14 @@
         >
           Zurück zum Kurs
         </ion-button>
+        <ion-button
+          expand="block"
+          @click="deleteCourseDate"
+          class="ion-margin"
+          color="danger"
+        >
+          Stunde löschen
+        </ion-button>
       </ion-list>
     </template>
   </PageLayout>
@@ -77,6 +85,7 @@ import { notify } from '@/notify'
 import { useRoute } from 'vue-router'
 import { flashOutline } from 'ionicons/icons'
 import { state } from '@/store'
+import { alert } from '@/alert'
 
 export default defineComponent({
   name: 'CourseCourseDateDetail',
@@ -255,7 +264,7 @@ export default defineComponent({
         }
       }
 
-      notify.success('Kurs erfolgreich gespeichert.')
+      notify.success('Stunde erfolgreich gespeichert.')
       ionRouter.navigate(`/tabs/course/${unref(course).id}`, 'back', 'push')
     }
 
@@ -279,6 +288,44 @@ export default defineComponent({
       return count
     }
 
+    async function deleteCourseDate() {
+      if (state.offline) {
+        notify.error('Fehler beim Löschen. Keine Internetverbindung.')
+        return
+      }
+      const confirm = await alert.confirm(
+        'Stunde wirklich löschen?',
+        `Dadurch wird die Stunde auch bei allen Teilnehmern entfernt. Soll diese Stunde endgültig gelöscht werden?`
+      )
+      if (!confirm) {
+        return
+      }
+
+      const cardIds = unref(courseDate).cards.map(({ id }: any) => id)
+
+      if (cardIds.length) {
+        const { error } = await supabase
+          .from('card_course_date')
+          .delete()
+          .in('card_id', cardIds)
+        if (error) {
+          notify.error('Fehler beim Löschen der Stundenzuweisungen.', error)
+          return
+        }
+      }
+
+      const { error } = await supabase
+        .from('course_dates')
+        .delete()
+        .match({ id: courseDateId })
+      if (error) {
+        notify.error('Fehler beim Löschen der Stunde.', error)
+        return
+      }
+      notify.success('Stunde erfolgreich gelöscht.')
+      ionRouter.navigate(`/tabs/course/${unref(course).id}`, 'back', 'push')
+    }
+
     return {
       course,
       topics,
@@ -289,6 +336,7 @@ export default defineComponent({
       updateCourseDate,
       knowsSelectedTopic,
       knownByNumberOfCards,
+      deleteCourseDate,
       flashOutline,
     }
   },
