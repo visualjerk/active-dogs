@@ -1,5 +1,10 @@
 # ToDos
 
+## Bugs
+
+- [ ] Back Button Bug
+- [x] Delete Bugs (Foreign Key)
+
 ## Course Dates
 
 - [x] Edit course_dates
@@ -10,9 +15,10 @@
 
 ## Cards / Customers
 
+- [ ] Add alert for card deletion
 - [ ] Card details view
 - [ ] Card delete in details view
-- [ ] Add card instead of edit customers
+- [ ] Add card instead of edit customers (Maybe)
 
 ## Release
 

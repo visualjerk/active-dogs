@@ -218,6 +218,46 @@ export default defineComponent({
       if (!confirm) {
         return
       }
+
+      const cardIds = unref(course).cards.map(({ id }: any) => id)
+      const courseDateIds = unref(course).course_dates.map(({ id }: any) => id)
+
+      // Delete card course dates
+      if (cardIds.length) {
+        const { error } = await supabase
+          .from('card_course_date')
+          .delete()
+          .in('card_id', cardIds)
+        if (error) {
+          notify.error('Fehler beim Löschen der Stundenzuweisungen.', error)
+          return
+        }
+      }
+
+      // Delete cards
+      if (cardIds.length) {
+        const { error } = await supabase
+          .from('cards')
+          .delete()
+          .in('id', cardIds)
+        if (error) {
+          notify.error('Fehler beim Löschen der Kundenzuweisungen.', error)
+          return
+        }
+      }
+
+      // Delete course dates
+      if (courseDateIds.length) {
+        const { error } = await supabase
+          .from('course_dates')
+          .delete()
+          .in('id', courseDateIds)
+        if (error) {
+          notify.error('Fehler beim Löschen der Stunden.', error)
+          return
+        }
+      }
+
       const { error } = await supabase.from('courses').delete().match({ id })
       if (error) {
         notify.error('Fehler beim Löschen des Kurses.', error)

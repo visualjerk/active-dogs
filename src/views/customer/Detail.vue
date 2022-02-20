@@ -51,7 +51,16 @@ export default defineComponent({
     async function getCustomer() {
       const result = await supabase
         .from('customers')
-        .select(`name, dogname, id`)
+        .select(
+          `
+          name,
+          dogname,
+          id,
+          cards (
+            id
+          )
+        `
+        )
         .match({
           id,
         })
@@ -70,11 +79,36 @@ export default defineComponent({
       }
       const confirm = await alert.confirm(
         'Kunde wirklich löschen?',
-        `Soll der Kunde "${unref(customer).name}" endgültig gelöscht werden?`
+        `Soll der Kunde "${unref(customer).dogname} (${
+          unref(customer).name
+        })" und seine Stundeninformationen endgültig gelöscht werden?`
       )
       if (!confirm) {
         return
       }
+
+      const cardIds = unref(customer).cards.map(({ id }: any) => id)
+      if (cardIds.length) {
+        const { error } = await supabase
+          .from('card_course_date')
+          .delete()
+          .in('card_id', cardIds)
+        if (error) {
+          notify.error('Fehler beim Löschen der Stundendaten.', error)
+          return
+        }
+      }
+      if (cardIds.length) {
+        const { error } = await supabase
+          .from('cards')
+          .delete()
+          .in('id', cardIds)
+        if (error) {
+          notify.error('Fehler beim Löschen der Kurszuweisungen.', error)
+          return
+        }
+      }
+
       const { error } = await supabase.from('customers').delete().match({ id })
       if (error) {
         notify.error('Fehler beim Löschen des Kunden.', error)
