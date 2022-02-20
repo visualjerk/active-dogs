@@ -4,7 +4,7 @@
     <template v-else>
       <ion-header>
         <ion-toolbar>
-          <ion-buttons slot="start">
+          <ion-buttons slot="start" v-if="backRoute">
             <ion-back-button :default-href="backRoute"></ion-back-button>
           </ion-buttons>
           <ion-title>{{ title }}</ion-title>
@@ -16,7 +16,7 @@
             <ion-buttons slot="start">
               <ion-back-button></ion-back-button>
             </ion-buttons>
-            <ion-title>
+            <ion-title size="large">
               {{ title }}
             </ion-title>
           </ion-toolbar>
@@ -68,3 +68,9 @@ export default defineComponent({
   },
 })
 </script>
+
+<style>
+ion-title.title-large {
+  font-size: 1.6rem;
+}
+</style>

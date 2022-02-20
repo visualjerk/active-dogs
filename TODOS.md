@@ -2,8 +2,12 @@
 
 ## Bugs
 
-- [ ] Back Button Bug
+- [x] Back Button Bug
 - [x] Delete Bugs (Foreign Key)
+
+## Course
+
+- [ ] Edit Course
 
 ## Course Dates
 
