@@ -58,12 +58,15 @@
           <ion-label>Der Kurs ist noch leer ...</ion-label>
         </ion-item>
         <template v-else>
-          <ion-item v-for="card in cards" :key="card.id">
-            <ion-label
-              >{{ card.customers.dogname }} ({{
-                card.customers.name
-              }})</ion-label
-            >
+          <ion-item
+            v-for="card in cards"
+            :key="card.id"
+            button
+            :router-link="`/tabs/course/${course.id}/carddetail/${card.id}`"
+          >
+            <ion-label>
+              {{ card.customers.dogname }} ({{ card.customers.name }})
+            </ion-label>
             <div slot="end" class="buttons">
               <ion-button
                 :color="card.payed ? 'success' : 'light'"

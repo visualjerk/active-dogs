@@ -53,6 +53,10 @@ const routes: Array<RouteRecordRaw> = [
             path: ':id/coursedatedetail/:courseDateId',
             component: () => import('@/views/course/CourseDateDetail.vue'),
           },
+          {
+            path: ':id/carddetail/:cardId',
+            component: () => import('@/views/course/CardDetail.vue'),
+          },
         ],
       },
       {
