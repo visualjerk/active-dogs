@@ -30,10 +30,10 @@ import { defineComponent, ref, Ref, unref } from 'vue'
 import { IonButton, useIonRouter, onIonViewWillEnter } from '@ionic/vue'
 import { useRoute } from 'vue-router'
 import { supabase } from '@/api'
-import { PostgrestError } from '@supabase/postgrest-js'
 import PageLayout from '@/components/PageLayout.vue'
 import CustomerInputList from '@/components/CustomerInputList.vue'
 import { notify } from '@/notify'
+import { alert } from '@/alert'
 import { state } from '@/store'
 
 export default defineComponent({
@@ -90,10 +90,6 @@ export default defineComponent({
     getCustomers()
     onIonViewWillEnter(getCustomers)
 
-    async function handleError(error: PostgrestError) {
-      notify.error('Fehler beim Speichern der Änderungen.', error)
-    }
-
     async function saveCustomers() {
       if (state.offline) {
         notify.error('Fehler beim Speichern. Keine Internetverbindung.')
@@ -110,14 +106,50 @@ export default defineComponent({
       )
 
       if (removedCustomerIds.length) {
-        const result = await supabase
+        const confirm = await alert.confirm(
+          'Kursteilnehmer löschen?',
+          'Du bist dabei Kursteilnehmer zu entfernen. Wenn ein Kursteilnehmer entfernt wird, werden dadurch auch seine Stundenzuweisungen gelöscht.'
+        )
+        if (!confirm) {
+          return
+        }
+
+        // Get card ids
+        const { error, body } = await supabase
           .from('cards')
-          .delete()
+          .select(`id`)
           .eq('course_id', courseId)
           .in('customer_id', removedCustomerIds)
-        if (result.error) {
-          handleError(result.error)
+
+        if (error || !body) {
+          notify.error('Fehler beim Holen der Kurszuweisungen.', error)
           return
+        }
+
+        const cardIds = body.map(({ id }: any) => id)
+
+        // Delete card course dates
+        if (cardIds.length) {
+          const { error } = await supabase
+            .from('card_course_date')
+            .delete()
+            .in('card_id', cardIds)
+          if (error) {
+            notify.error('Fehler beim Löschen der Stundenzuweisungen.', error)
+            return
+          }
+        }
+
+        // Delete cards
+        if (cardIds.length) {
+          const { error } = await supabase
+            .from('cards')
+            .delete()
+            .in('id', cardIds)
+          if (error) {
+            notify.error('Fehler beim Löschen der Kundenzuweisungen.', error)
+            return
+          }
         }
       }
 
@@ -127,11 +159,11 @@ export default defineComponent({
       })
 
       if (newCustomerIds.length) {
-        const { error: error2 } = await supabase
+        const { error } = await supabase
           .from('cards')
           .insert(newCustomerIds.map(mapCustomerToCourse))
-        if (error2) {
-          handleError(error2)
+        if (error) {
+          notify.error('Fehler beim Speichern der Änderungen.', error)
           return
         }
       }

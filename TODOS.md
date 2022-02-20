@@ -19,7 +19,7 @@
 
 ## Cards / Customers
 
-- [ ] Add alert for card deletion
+- [x] Add alert for card deletion
 - [ ] Card details view
 - [ ] Card delete in details view
 - [ ] Add card instead of edit customers (Maybe)
