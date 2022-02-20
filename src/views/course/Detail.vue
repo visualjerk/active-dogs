@@ -68,10 +68,7 @@
               {{ card.customers.dogname }} ({{ card.customers.name }})
             </ion-label>
             <div slot="end" class="buttons">
-              <ion-button
-                :color="card.payed ? 'success' : 'light'"
-                @click="togglePayed(card)"
-              >
+              <ion-button :color="card.payed ? 'success' : 'light'">
                 <ion-icon
                   :icon="checkmarkCircle"
                   v-if="card.payed"
@@ -270,20 +267,6 @@ export default defineComponent({
       ionRouter.navigate('/tabs/course', 'back', 'push')
     }
 
-    async function togglePayed(card: any) {
-      const { error } = await supabase
-        .from('cards')
-        .update({
-          payed: !card.payed,
-        })
-        .match({ id: card.id })
-      if (error) {
-        notify.error('Fehler beim Ändern des Bezahlstatus.', error)
-        return
-      }
-      getCourse()
-    }
-
     const cards = computed(() =>
       unref(course).cards.sort((a: any, b: any) => a.id - b.id)
     )
@@ -295,7 +278,6 @@ export default defineComponent({
       showCourseDateExpand,
       cards,
       deleteCourse,
-      togglePayed,
       pawOutline,
       checkmarkCircle,
       closeCircle,
