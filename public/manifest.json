@@ -1,7 +1,7 @@
 {
   "name": "Active Dogs Kurse",
   "short_name": "Kurse",
-  "start_url": "index.html",
+  "start_url": ".",
   "scope": "./",
   "icons": [
     {
