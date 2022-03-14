@@ -24,8 +24,18 @@
           </ion-button>
         </ion-item>
         <ion-item lines="none">
-          <ion-label>Stundenanzahl</ion-label>
-          <ion-badge slot="end">{{ card.course_dates?.length }}/10</ion-badge>
+          <ion-label>Kartengröße</ion-label>
+          <ion-select :value="card.count" @ion-change="updateCount($event)">
+            <ion-select-option :value="5">5</ion-select-option>
+            <ion-select-option :value="8">8</ion-select-option>
+            <ion-select-option :value="10">10</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label>Verbrauchte Stunden</ion-label>
+          <ion-badge slot="end">
+            {{ card.course_dates?.length }} / {{ card.count }}
+          </ion-badge>
         </ion-item>
         <ion-list-header>
           <ion-label>Besuchte Stunden</ion-label>
@@ -69,6 +79,8 @@ import {
   IonLabel,
   IonList,
   IonItem,
+  IonSelect,
+  IonSelectOption,
   IonIcon,
   IonBadge,
   onIonViewWillEnter,
@@ -86,6 +98,8 @@ export default defineComponent({
     IonLabel,
     IonList,
     IonItem,
+    IonSelect,
+    IonSelectOption,
     IonIcon,
     PageLayout,
     IonBadge,
@@ -105,6 +119,7 @@ export default defineComponent({
           `
           id,
           payed,
+          count,
           courses (
             id,
             name
@@ -155,6 +170,20 @@ export default defineComponent({
       getCard()
     }
 
+    async function updateCount(event: any) {
+      const { error } = await supabase
+        .from('cards')
+        .update({
+          count: event.detail.value,
+        })
+        .match({ id: unref(card).id })
+      if (error) {
+        notify.error('Fehler beim Ändern der Kartengröße.', error)
+        return
+      }
+      getCard()
+    }
+
     return {
       card,
       course,
@@ -163,6 +192,7 @@ export default defineComponent({
       checkmarkCircle,
       closeCircle,
       togglePayed,
+      updateCount,
     }
   },
 })

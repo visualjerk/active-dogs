@@ -21,6 +21,7 @@
 
 - [x] Add alert for card deletion
 - [x] Card details view
+- [x] Add card 5 / 8 / 10
 - [ ] Card delete in details view
 - [ ] Add card instead of edit customers (Maybe)
 

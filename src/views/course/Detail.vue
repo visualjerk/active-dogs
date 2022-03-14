@@ -77,7 +77,9 @@
                 <ion-icon :icon="closeCircle" v-else slot="start"></ion-icon>
                 €
               </ion-button>
-              <ion-badge>{{ card.course_dates?.length }} / 10</ion-badge>
+              <ion-badge
+                >{{ card.course_dates?.length }} / {{ card.count }}</ion-badge
+              >
             </div>
           </ion-item>
         </template>
@@ -172,6 +174,7 @@ export default defineComponent({
           cards (
             id,
             payed,
+            count,
             customers (
               id,
               name,
