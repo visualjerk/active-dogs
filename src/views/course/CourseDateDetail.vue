@@ -307,6 +307,7 @@ export default defineComponent({
         const { error } = await supabase
           .from('card_course_date')
           .delete()
+          .match({ course_date_id: courseDateId })
           .in('card_id', cardIds)
         if (error) {
           notify.error('Fehler beim Löschen der Stundenzuweisungen.', error)
