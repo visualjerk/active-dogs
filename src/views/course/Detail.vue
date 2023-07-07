@@ -202,6 +202,7 @@ export default defineComponent({
         .order('date', { foreignTable: 'course_dates', ascending: false })
 
       if (result.error) {
+        notify.error('Fehler beim Laden der der Kurse.', result.error)
         return
       }
       course.value = result.body[0]
