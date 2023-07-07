@@ -164,6 +164,7 @@ export default defineComponent({
           id: courseDateId,
         })
       if (result.error) {
+        notify.error('Fehler beim Laden der Stunden.', result.error)
         return
       }
       courseDate.value = result.body[0]
@@ -182,6 +183,7 @@ export default defineComponent({
         `
       )
       if (result.error) {
+        notify.error('Fehler beim Laden der Themen.', result.error)
         return
       }
       topics.value = result.body

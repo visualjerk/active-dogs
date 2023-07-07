@@ -143,6 +143,7 @@ export default defineComponent({
           id: cardId,
         })
       if (result.error) {
+        notify.error('Fehler beim Laden der Karten.', result.error)
         return
       }
       card.value = result.body[0]

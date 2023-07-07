@@ -65,6 +65,7 @@ export default defineComponent({
           id,
         })
       if (result.error) {
+        notify.error('Fehler beim Laden des Kunden.', result.error)
         return
       }
       customer.value = result.body[0]

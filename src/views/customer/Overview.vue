@@ -28,6 +28,7 @@ import {
 } from '@ionic/vue'
 import { supabase } from '@/api'
 import PageLayout from '@/components/PageLayout.vue'
+import { notify } from '@/notify'
 
 export default defineComponent({
   name: 'CustomerOverview',
@@ -46,6 +47,7 @@ export default defineComponent({
         .select(`name, dogname, id`)
         .order('dogname')
       if (result.error) {
+        notify.error('Fehler beim Laden der Kunden.', result.error)
         return
       }
       customers.value = result.body

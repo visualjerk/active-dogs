@@ -66,6 +66,7 @@ export default defineComponent({
           id,
         })
       if (result.error) {
+        notify.error('Fehler beim Laden der Kurse.', result.error)
         return
       }
       course.value = result.body[0]
@@ -83,6 +84,7 @@ export default defineComponent({
         .from('customers')
         .select(`name, dogname, id`)
       if (result.error) {
+        notify.error('Fehler beim Laden des Kunden.', result.error)
         return
       }
       customers.value = result.body

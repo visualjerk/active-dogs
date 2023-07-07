@@ -33,6 +33,7 @@ import {
 } from '@ionic/vue'
 import { supabase } from '@/api'
 import PageLayout from '@/components/PageLayout.vue'
+import { notify } from '@/notify'
 
 export default defineComponent({
   name: 'CourseOverview',
@@ -61,6 +62,7 @@ export default defineComponent({
         )
         .order('name')
       if (result.error) {
+        notify.error('Fehler beim Laden der Kurse.', result.error)
         return
       }
       courses.value = result.body
