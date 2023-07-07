@@ -57,8 +57,10 @@ export default defineComponent({
           `
           name,
           id,
-          customers (
-            id
+          cards (
+            customers (
+              id
+            )
           )
         `
         )
@@ -70,8 +72,8 @@ export default defineComponent({
         return
       }
       course.value = result.body[0]
-      selectedCustomerIds.value = course.value.customers.map(
-        ({ id }: any) => id
+      selectedCustomerIds.value = course.value.cards.map(
+        ({ customers }: any) => customers.id
       )
     }
     getCourse()
@@ -124,7 +126,7 @@ export default defineComponent({
           .in('customer_id', removedCustomerIds)
 
         if (error || !body) {
-          notify.error('Fehler beim Holen der Kurszuweisungen.', error)
+          notify.error('Fehler beim Laden der Kurszuweisungen.', error)
           return
         }
 
