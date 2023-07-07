@@ -1,2 +1,2 @@
 "use strict";(self["webpackChunkactive_dogs"]=self["webpackChunkactive_dogs"]||[]).push([[592],{7592:function(e,n,t){t.r(n),t.d(n,{default:function(){return i}});var u=t(6252);function o(e,n,t,o,r,a){const c=(0,u.up)("ion-router-outlet"),s=(0,u.up)("ion-page");return(0,u.wg)(),(0,u.j4)(s,null,{default:(0,u.w5)((()=>[(0,u.Wm)(c)])),_:1})}var r=t(8510),a=(0,u.aZ)({name:"CustomerIndex",components:{IonPage:r._i,IonRouterOutlet:r.jP}}),c=t(3744);const s=(0,c.Z)(a,[["render",o]]);var i=s}}]);
-//# sourceMappingURL=592.5365c6b1.js.map
+//# sourceMappingURL=592.20e13893.js.map
