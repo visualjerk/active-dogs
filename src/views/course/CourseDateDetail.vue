@@ -233,6 +233,7 @@ export default defineComponent({
         return
       }
 
+      const courseId = unref(course).id
       const newCardIds = unref(selectedCardIds).filter(
         (id) => !oldCardIds.includes(id)
       )
@@ -244,6 +245,7 @@ export default defineComponent({
         const { error } = await supabase
           .from('card_course_date_relation')
           .delete()
+          .eq('course_id', courseId)
           .in('card_id', deleteCardIds)
         if (error) {
           notify.error('Fehler beim Hinzufügen der Teilnehmer.', error)
