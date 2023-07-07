@@ -229,7 +229,7 @@ export default defineComponent({
       // Delete card course dates
       if (cardIds.length) {
         const { error } = await supabase
-          .from('card_course_date')
+          .from('card_course_date_relation')
           .delete()
           .in('card_id', cardIds)
         if (error) {

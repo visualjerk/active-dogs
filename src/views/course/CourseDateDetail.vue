@@ -242,9 +242,9 @@ export default defineComponent({
 
       if (deleteCardIds.length) {
         const { error } = await supabase
-          .from('card_course_date')
+          .from('card_course_date_relation')
           .delete()
-          .in('id', deleteCardIds)
+          .in('card_id', deleteCardIds)
         if (error) {
           notify.error('Fehler beim Hinzufügen der Teilnehmer.', error)
           return
@@ -258,7 +258,7 @@ export default defineComponent({
         })
 
         const { error } = await supabase
-          .from('card_course_date')
+          .from('card_course_date_relation')
           .insert(newCardIds.map(mapCardToCourseDate))
         if (error) {
           notify.error('Fehler beim Hinzufügen der Teilnehmer.', error)
@@ -307,7 +307,7 @@ export default defineComponent({
 
       if (cardIds.length) {
         const { error } = await supabase
-          .from('card_course_date')
+          .from('card_course_date_relation')
           .delete()
           .match({ course_date_id: courseDateId })
           .in('card_id', cardIds)

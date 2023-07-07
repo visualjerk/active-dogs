@@ -214,7 +214,7 @@ export default defineComponent({
       })
 
       const { error } = await supabase
-        .from('card_course_date')
+        .from('card_course_date_relation')
         .insert(unref(selectedCardIds).map(mapCardToCourseDate))
       if (error) {
         notify.error('Fehler beim Hinzufügen der Teilnehmer.', error)
