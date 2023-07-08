@@ -72,7 +72,7 @@ export default defineComponent({
         return
       }
       course.value = result.body[0]
-      selectedCustomerIds.value = course.value.cards.map(
+      selectedCustomerIds.value = unref(course).cards.map(
         ({ customers }: any) => customers.id
       )
     }
@@ -101,7 +101,9 @@ export default defineComponent({
       }
       const customerIds = selectedCustomerIds.value
       const courseId = course.value.id
-      const oldCustomerIds = unref(course).customers.map(({ id }: any) => id)
+      const oldCustomerIds = unref(course).cards.map(
+        ({ customers }: any) => customers.id
+      )
       const removedCustomerIds = oldCustomerIds.filter(
         (id: number) => !customerIds.includes(id)
       )
